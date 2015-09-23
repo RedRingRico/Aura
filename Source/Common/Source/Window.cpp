@@ -37,7 +37,7 @@ namespace Aura
 			return AUR_FAIL;
 		}
 
-		if( ( EGLMajor < 1 ) || ( EGLMajor == 1 ) && ( EGLMinor < 4 ) )
+		if( ( EGLMajor < 1 ) || ( ( EGLMajor == 1 ) && ( EGLMinor < 4 ) ) )
 		{
 			std::cout << "[Aura::Window::Create] <ERROR> "
 				"EGL version is not 1.4 or greater.  Found version: " <<

@@ -35,6 +35,16 @@ namespace Aura
 			return AUR_FAIL;
 		}
 
+		if( m_Gamepad.Initialise( ) != AUR_OK )
+		{
+			std::cout << "[Aura::Game::Initialise] <ERROR> "
+				"Failed to initialise the gamepad" << std::endl;
+
+			this->PlatformTerminate( );
+
+			return AUR_FAIL;
+		}
+
 		glClearColor( 0.0f, 17.0f / 255.0f, 43.0f / 255.0f, 1.0f );
 
 		return AUR_OK;
@@ -42,9 +52,22 @@ namespace Aura
 
 	AUR_UINT32 Game::Execute( )
 	{
-		glClear( GL_COLOR_BUFFER_BIT );
-		eglSwapBuffers( m_Window.GetEGLDisplay( ), m_Window.GetEGLSurface( ) );
-		sleep( 4 );
+		GAMEPAD_STATE GamepadState;
+		AUR_BOOL Run = AUR_TRUE;
+
+		while( Run )
+		{
+			m_Gamepad.GetState( &GamepadState );
+
+			if( GamepadState.Buttons & GAMEPAD_BUTTON_START )
+			{
+				Run = AUR_FALSE;
+			}
+
+			glClear( GL_COLOR_BUFFER_BIT );
+			eglSwapBuffers( m_Window.GetEGLDisplay( ),
+				m_Window.GetEGLSurface( ) );
+		}
 
 		this->PlatformTerminate( );
 

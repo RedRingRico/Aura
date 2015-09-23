@@ -1,9 +1,5 @@
 #include <iostream>
 #include <GitVersion.hpp>
-#include <PandoraFullscreen.hpp>
-#include <Window.hpp>
-#include <unistd.h>
-#include <GLES2/gl2.h>
 #include <Game.hpp>
 
 int main( int p_Argc, char **p_ppArgv )
