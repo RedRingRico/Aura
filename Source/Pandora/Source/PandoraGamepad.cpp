@@ -213,12 +213,12 @@ namespace Aura
 
 					if( Event[ i ].code == ABS_X )
 					{
-						m_GamepadState.AnalogueStick[ Stick ].X ==
+						m_GamepadState.AnalogueStick[ Stick ].X =
 							Event[ i ].value / 256.0f;
 					}
 					if( Event[ i ].code == ABS_Y )
 					{
-						m_GamepadState.AnalogueStick[ Stick ].Y ==
+						m_GamepadState.AnalogueStick[ Stick ].Y =
 							Event[ i ].value / 256.0f;
 					}
 					break;

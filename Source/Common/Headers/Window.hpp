@@ -3,6 +3,7 @@
 
 #include <EGL/egl.h>
 #include <DataTypes.hpp>
+#include <X11/Xlib.h>
 
 namespace Aura
 {
@@ -23,6 +24,8 @@ namespace Aura
 		EGLDisplay	m_EGLDisplay;
 		EGLSurface	m_EGLSurface;
 		EGLContext	m_EGLContext;
+		Display		*m_pDisplay;
+		::Window	m_Window;
 	};
 }
 
