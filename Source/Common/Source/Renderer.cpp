@@ -38,8 +38,8 @@ namespace Aura
 			EGL_NONE
 		};
 
-		m_EGLContext = eglCreateContext( m_EGLDisplay, p_Window.GetEGLConfig( ),
-			EGL_NO_CONTEXT, ContextAttribs );
+		m_EGLContext = eglCreateContext( m_EGLDisplay,
+			p_Window.GetEGLConfig( ), EGL_NO_CONTEXT, ContextAttribs );
 
 		if( m_EGLContext == EGL_NO_CONTEXT )
 		{
