@@ -59,7 +59,6 @@ namespace Aura
 			return AUR_FAIL;
 		}
 
-		EGLConfig Config;
 		EGLint ConfigCount;
 
 		EGLint EGLAttributes[ ] =
@@ -75,7 +74,7 @@ namespace Aura
 			EGL_NONE
 		};
 
-		if( eglChooseConfig( m_EGLDisplay, EGLAttributes, &Config, 1,
+		if( eglChooseConfig( m_EGLDisplay, EGLAttributes, &m_EGLConfig, 1,
 			&ConfigCount ) != EGL_TRUE )
 		{
 			std::cout << "[Aura::Window::Create] <ERROR> "
@@ -84,39 +83,13 @@ namespace Aura
 			return AUR_FAIL;
 		}
 
-		m_EGLSurface = eglCreateWindowSurface( m_EGLDisplay, Config,
+		m_EGLSurface = eglCreateWindowSurface( m_EGLDisplay, m_EGLConfig,
 			m_Window, AUR_NULL );
 
 		if( m_EGLSurface == EGL_NO_SURFACE )
 		{
 			std::cout << "[Aura::Window::Create] <ERROR> "
 				"Failed when creating the window surface" << std::endl;
-
-			return AUR_FAIL;
-		}
-
-		EGLint ContextAttribs[ ] =
-		{
-			EGL_CONTEXT_CLIENT_VERSION,	2,
-			EGL_NONE
-		};
-
-		m_EGLContext = eglCreateContext( m_EGLDisplay, Config,
-			EGL_NO_CONTEXT, ContextAttribs );
-
-		if( m_EGLContext == EGL_NO_CONTEXT )
-		{
-			std::cout << "[Aura::Window::Create] <ERROR> "
-				"Failed to create an EGL context" << std::endl;
-
-			return AUR_FAIL;
-		}
-
-		if( eglMakeCurrent( m_EGLDisplay, m_EGLSurface, m_EGLSurface,
-			m_EGLContext ) != EGL_TRUE )
-		{
-			std::cout << "[Aura::Window::Create] <ERROR> "
-				"Unable to make the EGL context current" << std::endl;
 
 			return AUR_FAIL;
 		}

@@ -19,11 +19,12 @@ namespace Aura
 
 		EGLDisplay GetEGLDisplay( ) const;
 		EGLSurface GetEGLSurface( ) const;
+		EGLConfig GetEGLConfig( ) const;
 
 	private:
 		EGLDisplay	m_EGLDisplay;
 		EGLSurface	m_EGLSurface;
-		EGLContext	m_EGLContext;
+		EGLConfig	m_EGLConfig;
 		Display		*m_pDisplay;
 		::Window	m_Window;
 	};

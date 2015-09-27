@@ -3,6 +3,7 @@
 
 #include <DataTypes.hpp>
 #include <Window.hpp>
+#include <Renderer.hpp>
 #include <Gamepad.hpp>
 
 namespace Aura
@@ -20,8 +21,9 @@ namespace Aura
 		AUR_UINT32 PlatformInitialise( );
 		AUR_UINT32 PlatformTerminate( );
 
-		Window	m_Window;
-		Gamepad	m_Gamepad;
+		Window		m_Window;
+		Renderer	m_Renderer;
+		Gamepad		m_Gamepad;
 	};
 }
 

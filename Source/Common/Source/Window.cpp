@@ -6,7 +6,7 @@ namespace Aura
 	Window::Window( ) :
 		m_EGLDisplay( EGL_NO_DISPLAY ),
 		m_EGLSurface( EGL_NO_SURFACE ),
-		m_EGLContext( EGL_NO_CONTEXT ),
+		m_EGLConfig( ( EGLConfig )0 ),
 		m_pDisplay( AUR_NULL ),
 		m_Window( 0 )
 	{
@@ -20,12 +20,6 @@ namespace Aura
 
 	AUR_UINT32 Window::Destroy( )
 	{
-		if( m_EGLContext != EGL_NO_CONTEXT )
-		{
-			eglDestroyContext( m_EGLDisplay, m_EGLContext );
-			m_EGLContext = EGL_NO_CONTEXT;
-		}
-
 		if( m_EGLSurface != EGL_NO_SURFACE )
 		{
 			eglDestroySurface( m_EGLDisplay, m_EGLSurface );
@@ -68,6 +62,11 @@ namespace Aura
 	EGLSurface Window::GetEGLSurface( ) const
 	{
 		return m_EGLSurface;
+	}
+
+	EGLConfig Window::GetEGLConfig( ) const
+	{
+		return m_EGLConfig;
 	}
 }
 

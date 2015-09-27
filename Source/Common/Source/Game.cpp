@@ -35,6 +35,16 @@ namespace Aura
 			return AUR_FAIL;
 		}
 
+		if( m_Renderer.Create( m_Window ) != AUR_OK )
+		{
+			std::cout << "[Aura::Game::Initialise] <ERROR> "
+				"Failed to create renderer" << std::endl;
+
+			this->PlatformTerminate( );
+
+			return AUR_FAIL;
+		}
+
 		if( m_Gamepad.Initialise( ) != AUR_OK )
 		{
 			std::cout << "[Aura::Game::Initialise] <ERROR> "
@@ -45,7 +55,8 @@ namespace Aura
 			return AUR_FAIL;
 		}
 
-		glClearColor( 0.0f, 17.0f / 255.0f, 43.0f / 255.0f, 1.0f );
+		m_Renderer.SetClearFlags( AUR_TRUE, AUR_TRUE, AUR_TRUE );
+		m_Renderer.SetClearColour( 0.0f, 17.0f / 255.0f, 43.0f / 255.0f );
 
 		return AUR_OK;
 	}
@@ -64,9 +75,8 @@ namespace Aura
 				Run = AUR_FALSE;
 			}
 
-			glClear( GL_COLOR_BUFFER_BIT );
-			eglSwapBuffers( m_Window.GetEGLDisplay( ),
-				m_Window.GetEGLSurface( ) );
+			m_Renderer.Clear( );
+			m_Renderer.SwapBuffers( );
 		}
 
 		this->PlatformTerminate( );

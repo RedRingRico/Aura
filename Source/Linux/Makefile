@@ -66,9 +66,9 @@ CPPFLAGS	=	-c -DAURA_BUILD_$(BUILD_DEF) \
 				-I$(TOPSRC)/$(PLATFORM)/Headers -I$(TOPSRC)/Common/Headers \
 				-I$(TOPSRC)/Libs
 SYSIPATH	=
-INCPATH		= -I/opt/Imagination/PowerVR_Graphics/PowerVR_SDK/SDK_3.4/Builds/Include
+INCPATH		= -I/opt/Imagination/PowerVR_Graphics/PowerVR_SDK/SDK_3.5/Builds/Include
 SYSLPATH	=	
-LIBPATH		= -L/opt/Imagination/PowerVR_Graphics/PowerVR_SDK/SDK_3.4/Builds/Linux/x86_64/Lib
+LIBPATH		= -L/opt/Imagination/PowerVR_Graphics/PowerVR_SDK/SDK_3.5/Builds/Linux/x86_64/Lib
 SYSLIBS		= -lX11 -lXrandr -lXi -lrt -pthread -lGLESv2 -lEGL
 LINKFLAGS	=
 
