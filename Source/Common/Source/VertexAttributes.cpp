@@ -147,7 +147,7 @@ namespace Aura
 	}
 
 	GLenum ConvertVertexAttributeToGLenum(
-		const VERTEXATTRIBUTE p_VertexAttribute )
+		const VERTEXATTRIBUTE &p_VertexAttribute )
 	{
 		switch( p_VertexAttribute.Type )
 		{

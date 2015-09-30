@@ -1,5 +1,6 @@
 #include <Renderer.hpp>
 #include <Window.hpp>
+#include <GLES2Extender.hpp>
 #include <iostream>
 
 namespace Aura
@@ -57,6 +58,67 @@ namespace Aura
 
 			return AUR_FAIL;
 		}
+
+#if defined AURA_BUILD_DEBUG
+		PrintGLES2Extensions( );
+#endif // AURA_BUILD_DEBUG
+
+		if( InitialiseGLES2Extensions( ) != AUR_OK )
+		{
+			std::cout << "[Aura::Renderer::Create] <ERROR> "
+				"Failed to initialise OpenGL | ES 2.0 extensions" << std::endl;
+
+			return AUR_FAIL;
+		}
+
+#if defined AURA_BUILD_DEBUG
+		std::cout << "[Aura::Renderer::Create] <INFO> GLES Vendor: " <<
+			glGetString( GL_VENDOR ) << std::endl;
+		std::cout << "[Aura::Renderer::Create] <INFO> GLES Renderer: " <<
+			glGetString( GL_RENDERER ) << std::endl;
+		std::cout << "[Aura::Renderer::Create] <INFO> GLES Version: " <<
+			glGetString( GL_VERSION ) << std::endl;
+		std::cout << "[Aura::Renderer::Create] <INFO> GLES GLSL "
+			"Version: " << glGetString( GL_SHADING_LANGUAGE_VERSION ) <<
+			std::endl;
+
+		std::cout << "[Aura::Renderer::Create] <INFO> Capabilities:" <<
+			std::endl;
+
+		GLint MaxVertexAttribs;
+		GLint MaxUniformVectors;
+		GLint MaxVaryingVectors;
+		GLint MaxVertexTextureImageUnits;
+		GLint MaxCombinedTextureImageUnits;
+		GLint MaxTextureImageUnits;
+		GLint MaxFragmentUniformVectors;
+
+		glGetIntegerv( GL_MAX_VERTEX_ATTRIBS, &MaxVertexAttribs );
+		glGetIntegerv( GL_MAX_VERTEX_UNIFORM_VECTORS, &MaxUniformVectors );
+		glGetIntegerv( GL_MAX_VARYING_VECTORS, &MaxVaryingVectors );
+		glGetIntegerv( GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS,
+			&MaxVertexTextureImageUnits );
+		glGetIntegerv( GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS,
+			&MaxCombinedTextureImageUnits );
+		glGetIntegerv( GL_MAX_TEXTURE_IMAGE_UNITS, &MaxTextureImageUnits );
+		glGetIntegerv( GL_MAX_FRAGMENT_UNIFORM_VECTORS,
+			&MaxFragmentUniformVectors );
+
+		std::cout << "\tMaximum vertex shader attributes:      " <<
+			MaxVertexAttribs << std::endl;
+		std::cout << "\tMaximum vertex shader uniform vectors: " <<
+			MaxUniformVectors << std::endl;
+		std::cout << "\tMaximum varying vectors:               " <<
+			MaxVaryingVectors << std::endl;
+		std::cout << "\tMaximum vertex texture image units:    " <<
+			MaxVertexTextureImageUnits << std::endl;
+		std::cout << "\tMaximum combined texture image units:  " <<
+			MaxCombinedTextureImageUnits << std::endl;
+		std::cout << "\tMaximum texture image units:           " <<
+			MaxTextureImageUnits <<std::endl;
+		std::cout << "\tMaximum fragment uniform vectors:      " <<
+			MaxFragmentUniformVectors << std::endl;
+#endif // AURA_BUILD_DEBUG
 
 		return AUR_OK;
 	}
