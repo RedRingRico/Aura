@@ -30,14 +30,14 @@ cat > ${ROOTDIR}/Build/PND/Aura_PXML.xml << __EOF__
 		</titles>
 		<version major="${MAJOR}" minor="${MINOR}" release="${REVISION}" build="${BUILD}"/>
 		<descriptions>
-			<description lang="en_US">An arcade-style 3D beat-'em-up</description>
-			<description lang="en_GB">An arcade-style 3D beat-'em-up</description>
+			<description lang="en_US">A cyberpunk-themed first person shooter</description>
+			<description lang="en_GB">A cyberpunk-themed first person shooter</description>
 		</descriptions>
 		<exec command="Aura"/>
 		<author name="Rico Tyrell" email="aura@redringrico.com"/>
 		<categories>
 			<category name="Game">
-				<subcategory name="ArcadeGame"/>
+				<subcategory name="ActionGame"/>
 			</category>
 		</categories>
 		<licenses>
