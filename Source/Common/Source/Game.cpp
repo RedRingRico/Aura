@@ -87,7 +87,25 @@ namespace Aura
 			"varying vec2 f_ST;\n"
 			"void main( )\n"
 			"{\n"
-			"	gl_FragColor = texture2D( Texture, f_ST );\n"//vec4( 0.0, 1.0, 0.0, 1.0 );\n"
+			"	gl_FragColor = texture2D( Texture, f_ST );\n"
+			"}\n"
+		};
+
+
+		const char WireframeVertexSource[ ] =
+		{
+			"attribute vec3 Position;\n"
+			"void main( )\n"
+			"{\n"
+			"	gl_Position = vec4( Position, 1.0 );\n"
+			"}\n"
+		};
+		const char WireframeFragmentSource[ ] =
+		{
+			"precision mediump float;\n"
+			"void main( )\n"
+			"{\n"
+			"	gl_FragColor = vec4( 0.0, 1.0, 0.0, 1.0 );\n"
 			"}\n"
 		};
 
@@ -132,9 +150,16 @@ namespace Aura
 		SquareShader.AddShaderSource( SHADER_TYPE_VERTEX, VertexSource );
 		SquareShader.AddShaderSource( SHADER_TYPE_FRAGMENT, FragmentSource );
 
+		Shader WireframeShader;
+
+		WireframeShader.AddShaderSource( SHADER_TYPE_VERTEX,
+			WireframeVertexSource );
+		WireframeShader.AddShaderSource( SHADER_TYPE_FRAGMENT,
+			WireframeFragmentSource );
+
 		Texture Texture512;
 
-		if( Texture512.LoadFromFile( "Content/Textures/512x512.tga" ) !=
+		if( Texture512.LoadFromFile( "Test/Textures/512x512.tga" ) !=
 			AUR_OK )
 		{
 			this->PlatformTerminate( );
@@ -156,6 +181,8 @@ namespace Aura
 			SquareShader.SetConstantData( "Texture", &Shader0 );
 			Texture512.Activate( );
 			Square.Render( );
+			WireframeShader.Activate( );
+			Square.RenderWireframe( );
 			m_Renderer.SwapBuffers( );
 		}
 
