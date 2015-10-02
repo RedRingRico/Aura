@@ -4,6 +4,7 @@
 #include <iostream>
 #include <RendererPrimitive.hpp>
 #include <Shader.hpp>
+#include <Texture.hpp>
 
 namespace Aura
 {
@@ -71,17 +72,22 @@ namespace Aura
 		const char VertexSource[ ] =
 		{
 			"attribute vec3 Position;\n"
+			"attribute vec2 ST;\n"
+			"varying vec2 f_ST;\n"
 			"void main( )\n"
 			"{\n"
+			"	f_ST = ST;\n"
 			"	gl_Position = vec4( Position, 1.0 );\n"
 			"}\n"
 		};
 		const char FragmentSource[ ] =
 		{
 			"precision mediump float;\n"
+			"uniform sampler2D Texture;\n"
+			"varying vec2 f_ST;\n"
 			"void main( )\n"
 			"{\n"
-			"	gl_FragColor = vec4( 0.0, 1.0, 0.0, 1.0 );\n"
+			"	gl_FragColor = texture2D( Texture, f_ST );\n"//vec4( 0.0, 1.0, 0.0, 1.0 );\n"
 			"}\n"
 		};
 
@@ -90,14 +96,16 @@ namespace Aura
 			AUR_FLOAT32 X;
 			AUR_FLOAT32 Y;
 			AUR_FLOAT32 Z;
+			AUR_FLOAT32 S;
+			AUR_FLOAT32 T;
 		};
 
 		VERTEX Vertices[ ] =
 		{
-			{ 0.5f, 0.5f, 0.0f },
-			{ 0.5f, -0.5f, 0.0f },
-			{ -0.5f, -0.5f, 0.0f },
-			{ -0.5f, 0.5f, 0.0f }
+			{ 0.5f, 0.5f, 0.0f, 1.0f, 1.0f },
+			{ 0.5f, -0.5f, 0.0f, 1.0f, 0.0f },
+			{ -0.5f, -0.5f, 0.0f, 0.0f, 0.0f },
+			{ -0.5f, 0.5f, 0.0f, 0.0f, 1.0f }
 		};
 
 		AUR_UINT16 Indices[ ] =
@@ -113,6 +121,9 @@ namespace Aura
 		VertexAttribs.AddVertexAttribute( VERTEXATTRIBUTE_TYPE_FLOAT3,
 			VERTEXATTRIBUTE_INTENT_POSITION );
 
+		VertexAttribs.AddVertexAttribute( VERTEXATTRIBUTE_TYPE_FLOAT2,
+			VERTEXATTRIBUTE_INTENT_TEXTURECOORDINATE );
+
 		Square.Create( 4, 6, ( AUR_BYTE * )Vertices,
 			Indices, VertexAttribs, PRIMITIVE_TYPE_TRIANGLE_LIST );
 
@@ -121,6 +132,16 @@ namespace Aura
 		SquareShader.AddShaderSource( SHADER_TYPE_VERTEX, VertexSource );
 		SquareShader.AddShaderSource( SHADER_TYPE_FRAGMENT, FragmentSource );
 
+		Texture Texture512;
+
+		if( Texture512.LoadFromFile( "Content/Textures/512x512.tga" ) !=
+			AUR_OK )
+		{
+			this->PlatformTerminate( );
+			return AUR_FAIL;
+		}
+
+		int Shader0 = 0;
 		while( Run )
 		{
 			m_Gamepad.GetState( &GamepadState );
@@ -132,6 +153,8 @@ namespace Aura
 
 			m_Renderer.Clear( );
 			SquareShader.Activate( );
+			SquareShader.SetConstantData( "Texture", &Shader0 );
+			Texture512.Activate( );
 			Square.Render( );
 			m_Renderer.SwapBuffers( );
 		}

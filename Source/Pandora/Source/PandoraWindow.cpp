@@ -59,7 +59,7 @@ namespace Aura
 		}
 
 		m_EGLSurface = eglCreateWindowSurface( m_EGLDisplay, m_EGLConfig,
-			( EGLNativeWindowType )0, AUR_NULL );
+			AUR_NULL, AUR_NULL );
 
 		if( m_EGLSurface == EGL_NO_SURFACE )
 		{

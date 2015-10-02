@@ -213,6 +213,8 @@ namespace Aura
 			glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0,
 				BUFFER_OFFSET( 0 ) );
 
+			glEnableVertexAttribArray( 0 );
+
 			struct POSITION
 			{
 				AUR_FLOAT32 Position[ 3 ];
