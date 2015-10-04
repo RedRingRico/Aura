@@ -3,8 +3,10 @@
 #include <unistd.h>
 #include <iostream>
 #include <RendererPrimitive.hpp>
-#include <Shader.hpp>
-#include <Texture.hpp>
+/*#include <Shader.hpp>
+#include <Texture.hpp>*/
+#include <VertexAttributes.hpp>
+#include <MaterialManager.hpp>
 
 namespace Aura
 {
@@ -69,46 +71,6 @@ namespace Aura
 		GAMEPAD_STATE GamepadState;
 		AUR_BOOL Run = AUR_TRUE;
 
-		const char VertexSource[ ] =
-		{
-			"attribute vec3 Position;\n"
-			"attribute vec2 ST;\n"
-			"varying vec2 f_ST;\n"
-			"void main( )\n"
-			"{\n"
-			"	f_ST = ST;\n"
-			"	gl_Position = vec4( Position, 1.0 );\n"
-			"}\n"
-		};
-		const char FragmentSource[ ] =
-		{
-			"precision mediump float;\n"
-			"uniform sampler2D Texture;\n"
-			"varying vec2 f_ST;\n"
-			"void main( )\n"
-			"{\n"
-			"	gl_FragColor = texture2D( Texture, f_ST );\n"
-			"}\n"
-		};
-
-
-		const char WireframeVertexSource[ ] =
-		{
-			"attribute vec3 Position;\n"
-			"void main( )\n"
-			"{\n"
-			"	gl_Position = vec4( Position, 1.0 );\n"
-			"}\n"
-		};
-		const char WireframeFragmentSource[ ] =
-		{
-			"precision mediump float;\n"
-			"void main( )\n"
-			"{\n"
-			"	gl_FragColor = vec4( 0.0, 1.0, 0.0, 1.0 );\n"
-			"}\n"
-		};
-
 		struct VERTEX
 		{
 			AUR_FLOAT32 X;
@@ -145,28 +107,41 @@ namespace Aura
 		Square.Create( 4, 6, ( AUR_BYTE * )Vertices,
 			Indices, VertexAttribs, PRIMITIVE_TYPE_TRIANGLE_LIST );
 
-		Shader SquareShader;
+		AUR_UINT32 TestMaterial, SolidColourMaterial;
 
-		SquareShader.AddShaderSource( SHADER_TYPE_VERTEX, VertexSource );
-		SquareShader.AddShaderSource( SHADER_TYPE_FRAGMENT, FragmentSource );
+		MaterialManager MatMan;
 
-		Shader WireframeShader;
-
-		WireframeShader.AddShaderSource( SHADER_TYPE_VERTEX,
-			WireframeVertexSource );
-		WireframeShader.AddShaderSource( SHADER_TYPE_FRAGMENT,
-			WireframeFragmentSource );
-
-		Texture Texture512;
-
-		if( Texture512.LoadFromFile( "Test/Textures/512x512.tga" ) !=
-			AUR_OK )
+		if( MatMan.CreateFromFile( "Test/Materials/Test.material",
+			TestMaterial ) != AUR_OK )
 		{
-			this->PlatformTerminate( );
+			std::cout << "[Aura::Game::Execute] <ERROR> "
+				"Failed to create Test material from file" << std::endl;
+
+			return AUR_FAIL;
+		}
+
+		if( MatMan.CreateFromFile(
+				"Test/Materials/PositionSolidColour.material",
+				SolidColourMaterial ) != AUR_OK )
+		{
+			std::cout << "[Aura::Game::Execute] <ERROR> "
+				"Failed to create PositionSolidColour material from file" <<
+				std::endl;
+
 			return AUR_FAIL;
 		}
 
 		int Shader0 = 0;
+		float Colour[ 4 ] = { 1.0f, 0.0f, 0.0f, 1.0f };
+
+		float Identity[ 16 ] =
+		{
+			1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+		};
+
 		while( Run )
 		{
 			m_Gamepad.GetState( &GamepadState );
@@ -177,11 +152,19 @@ namespace Aura
 			}
 
 			m_Renderer.Clear( );
-			SquareShader.Activate( );
-			SquareShader.SetConstantData( "Texture", &Shader0 );
-			Texture512.Activate( );
+			MatMan.Activate( TestMaterial );
+			MatMan.SetConstantData( TestMaterial, "Texture", &Shader0 );
+			MatMan.SetConstantData( TestMaterial, "World", Identity );
+			MatMan.SetConstantData( TestMaterial, "View", Identity );
+			MatMan.SetConstantData( TestMaterial, "Projection",
+				Identity );
 			Square.Render( );
-			WireframeShader.Activate( );
+			MatMan.Activate( SolidColourMaterial );
+			MatMan.SetConstantData( SolidColourMaterial, "Colour", Colour );
+			MatMan.SetConstantData( SolidColourMaterial, "World", Identity );
+			MatMan.SetConstantData( SolidColourMaterial, "View", Identity );
+			MatMan.SetConstantData( SolidColourMaterial, "Projection",
+				Identity );
 			Square.RenderWireframe( );
 			m_Renderer.SwapBuffers( );
 		}

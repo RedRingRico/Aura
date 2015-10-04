@@ -1,0 +1,12 @@
+{
+	"shader": {
+		"source": [
+			{ "type": "vertex", "path": "Test/Shaders/Test.vsh" },
+			{ "type": "fragment", "path": "Test/Shaders/Test.fsh" }
+		]
+	},
+	"texture": [
+		{ "type": "albedo", "path": "Test/Textures/512x512.tga" }
+	]
+}
+

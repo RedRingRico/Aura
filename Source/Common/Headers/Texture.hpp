@@ -46,6 +46,7 @@ namespace Aura
 		Texture( const Texture &p_Other );
 		Texture &operator=( const Texture &p_Other );
 
+
 		AUR_UINT16	m_Width;
 		AUR_UINT16	m_Height;
 		GLuint		m_TextureID;

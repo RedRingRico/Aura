@@ -33,7 +33,7 @@ cat > ${ROOTDIR}/Build/PND/Aura_PXML.xml << __EOF__
 			<description lang="en_US">A cyberpunk-themed first person shooter</description>
 			<description lang="en_GB">A cyberpunk-themed first person shooter</description>
 		</descriptions>
-		<exec command="Aura"/>
+		<exec command="RunAura.sh"/>
 		<author name="Rico Tyrell" email="aura@redringrico.com"/>
 		<categories>
 			<category name="Game">
@@ -46,6 +46,21 @@ cat > ${ROOTDIR}/Build/PND/Aura_PXML.xml << __EOF__
 	</application>
 </PXML>
 __EOF__
+
+cat > ${ROOTDIR}/Build/PND/RunAura.sh << __EOF__
+cat /proc/pandora/nub0/mode > /tmp/nub0mode_old
+cat /proc/pandora/nub1/mode > /tmp/nub1mode_old
+/usr/pandora/scripts/op_nubchange.sh absolute absolute
+
+./Aura
+
+nub0mode=`cat /tmp/nub0mode_old`
+nub1mode=`cat /tmp/nub1mode_old`
+/usr/pandora/scripts/op_nubchange.sh nub0mode nub1mode
+rm /tmp/nub0mode_old /tmp/nub1mode_old
+__EOF__ 
+
+chmod 755 ${ROOTDIR}/Build/PND/RunAura.sh
 
 cat > ${ROOTDIR}/Build/PND/powervr.ini << __EOF__
 [default]

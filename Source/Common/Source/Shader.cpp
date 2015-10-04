@@ -71,8 +71,11 @@ namespace Aura
 
 				glGetShaderInfoLog( ( *pShader ), LogLength, AUR_NULL, pLog );
 				std::cout << "[Aura::Shader::AddShaderSource] <ERROR> "
-					"Faield to compile " << ShaderTypeName << " shader:" <<
+					"Failed to compile " << ShaderTypeName << " shader:" <<
 					std::endl << pLog << std::endl;
+				
+				std::cout << "Shader source:" << std::endl;
+				std::cout << p_pSource << std::endl;
 
 				SafeDeleteArray< char >( pLog );
 			}

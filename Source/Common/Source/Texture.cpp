@@ -114,14 +114,15 @@ namespace Aura
 		glTexImage2D( GL_TEXTURE_2D, 0, Format, TargaHeader.Width,
 			TargaHeader.Height, 0, Format, Type, pImageData );
 
+		m_Hash = HashBufferFNV1a( pImageData, TargaHeader.Width *
+			TargaHeader.Height * ( TargaHeader.BitsPerPixel / 8 ) );
+
 		SafeDeleteArray< AUR_BYTE >( pImageData );
 
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-
-		m_Hash = HashStringFNV1a( p_FileName.c_str( ) );
 
 		m_Width = TargaHeader.Width;
 		m_Height = TargaHeader.Height;

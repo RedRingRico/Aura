@@ -78,6 +78,9 @@ namespace Aura
 		AUR_UINT32 GetHash( ) const;
 
 	private:
+		Shader( const Shader &p_Other );
+		Shader &operator=( const Shader &p_Other );
+
 		AUR_UINT32 Link( );
 		AUR_UINT32 GetConstants( );
 		AUR_UINT32 GetAttributes( );

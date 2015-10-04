@@ -1,0 +1,9 @@
+{
+	"shader": {
+		"source": [
+			{ "type": "vertex", "path": "Test/Shaders/PositionSolidColour.vsh" },
+			{ "type": "fragment", "path": "Test/Shaders/PositionSolidColour.fsh" }
+		]
+	}
+}
+
