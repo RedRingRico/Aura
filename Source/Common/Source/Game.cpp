@@ -3,8 +3,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <RendererPrimitive.hpp>
-/*#include <Shader.hpp>
-#include <Texture.hpp>*/
+#include <Matrix4x4.hpp>
 #include <VertexAttributes.hpp>
 #include <MaterialManager.hpp>
 
@@ -134,13 +133,11 @@ namespace Aura
 		int Shader0 = 0;
 		float Colour[ 4 ] = { 1.0f, 0.0f, 0.0f, 1.0f };
 
-		float Identity[ 16 ] =
-		{
-			1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f
-		};
+		Matrix4x4 IdentityMatrix;
+
+		float Identity[ 16 ];
+
+		IdentityMatrix.AsArray( Identity );
 
 		while( Run )
 		{
