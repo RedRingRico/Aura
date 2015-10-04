@@ -17,6 +17,16 @@ namespace Aura
 
 		void AsArray( AUR_FLOAT32 *p_pMatrix ) const;
 
+		// Row-column manipulator
+		inline AUR_FLOAT32 &operator( )( const AUR_MEMSIZE p_Row,
+			const AUR_MEMSIZE p_Column )
+			{ return m_M[ p_Row + ( p_Column * 4 ) ]; }
+
+		// Row-column accessor
+		inline AUR_FLOAT32 operator( )( const AUR_MEMSIZE p_Row,
+			AUR_MEMSIZE p_Column ) const
+			{ return m_M[ p_Row + ( p_Column * 4 ) ]; }
+
 	private:
 		// Column-major
 		// 0 4  8 12

@@ -6,6 +6,7 @@
 #include <Matrix4x4.hpp>
 #include <VertexAttributes.hpp>
 #include <MaterialManager.hpp>
+#include <Camera.hpp>
 
 namespace Aura
 {
@@ -81,10 +82,10 @@ namespace Aura
 
 		VERTEX Vertices[ ] =
 		{
-			{ 0.5f, 0.5f, 0.0f, 1.0f, 1.0f },
-			{ 0.5f, -0.5f, 0.0f, 1.0f, 0.0f },
-			{ -0.5f, -0.5f, 0.0f, 0.0f, 0.0f },
-			{ -0.5f, 0.5f, 0.0f, 0.0f, 1.0f }
+			{ 0.5f, 0.5f, -50.0f, 1.0f, 1.0f },
+			{ 0.5f, -0.5f, -50.0f, 1.0f, 0.0f },
+			{ -0.5f, -0.5f, -50.0f, 0.0f, 0.0f },
+			{ -0.5f, 0.5f, -50.0f, 0.0f, 1.0f }
 		};
 
 		AUR_UINT16 Indices[ ] =
@@ -133,11 +134,28 @@ namespace Aura
 		int Shader0 = 0;
 		float Colour[ 4 ] = { 1.0f, 0.0f, 0.0f, 1.0f };
 
+		Camera TestCamera;
+
+		TestCamera.SetAspectRatio( 800.0f / 480.0f );
+		TestCamera.SetProjectionMode( PROJECTIONMODE_PERSPECTIVE );
+		TestCamera.SetClippingPlanes( 1.0f, 100000.0f );
+
 		Matrix4x4 IdentityMatrix;
+		Matrix4x4 ProjectionMatrix, ViewMatrix;
 
 		float Identity[ 16 ];
+		float View[ 16 ], Projection[ 16 ];
 
 		IdentityMatrix.AsArray( Identity );
+
+		TestCamera.CalculateProjectionMatrix( );
+
+		TestCamera.GetProjectionMatrix( ProjectionMatrix );
+		ProjectionMatrix.AsArray( Projection );
+
+		TestCamera.CalculateViewMatrix( );
+		TestCamera.GetViewMatrix( ViewMatrix );
+		ViewMatrix.AsArray( View );
 
 		while( Run )
 		{
@@ -148,20 +166,24 @@ namespace Aura
 				Run = AUR_FALSE;
 			}
 
+			TestCamera.CalculateViewMatrix( );
+			TestCamera.GetViewMatrix( ViewMatrix );
+			ViewMatrix.AsArray( View );
+
 			m_Renderer.Clear( );
 			MatMan.Activate( TestMaterial );
 			MatMan.SetConstantData( TestMaterial, "Texture", &Shader0 );
 			MatMan.SetConstantData( TestMaterial, "World", Identity );
-			MatMan.SetConstantData( TestMaterial, "View", Identity );
+			MatMan.SetConstantData( TestMaterial, "View", View );
 			MatMan.SetConstantData( TestMaterial, "Projection",
-				Identity );
+				Projection );
 			Square.Render( );
 			MatMan.Activate( SolidColourMaterial );
 			MatMan.SetConstantData( SolidColourMaterial, "Colour", Colour );
 			MatMan.SetConstantData( SolidColourMaterial, "World", Identity );
-			MatMan.SetConstantData( SolidColourMaterial, "View", Identity );
+			MatMan.SetConstantData( SolidColourMaterial, "View", View );
 			MatMan.SetConstantData( SolidColourMaterial, "Projection",
-				Identity );
+				Projection );
 			Square.RenderWireframe( );
 			m_Renderer.SwapBuffers( );
 		}

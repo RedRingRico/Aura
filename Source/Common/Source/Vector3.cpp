@@ -175,7 +175,7 @@ namespace Aura
 	void Vector3::Print( const std::string &p_Name ) const
 	{
 		std::cout << "Vector [" << p_Name << "]: < " << m_X << ", " << m_Y <<
-			", " << m_Z << std::endl;
+			", " << m_Z << " >" << std::endl;
 	}
 
 	Vector3 &Vector3::operator-( )
