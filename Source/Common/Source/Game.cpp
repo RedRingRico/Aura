@@ -7,6 +7,8 @@
 #include <VertexAttributes.hpp>
 #include <MaterialManager.hpp>
 #include <Camera.hpp>
+#include <Model.hpp>
+#include <cstring>
 
 namespace Aura
 {
@@ -71,42 +73,6 @@ namespace Aura
 		GAMEPAD_STATE GamepadState;
 		AUR_BOOL Run = AUR_TRUE;
 
-		struct VERTEX
-		{
-			AUR_FLOAT32 X;
-			AUR_FLOAT32 Y;
-			AUR_FLOAT32 Z;
-			AUR_FLOAT32 S;
-			AUR_FLOAT32 T;
-		};
-
-		VERTEX Vertices[ ] =
-		{
-			{ 0.5f, 0.5f, -50.0f, 1.0f, 1.0f },
-			{ 0.5f, -0.5f, -50.0f, 1.0f, 0.0f },
-			{ -0.5f, -0.5f, -50.0f, 0.0f, 0.0f },
-			{ -0.5f, 0.5f, -50.0f, 0.0f, 1.0f }
-		};
-
-		AUR_UINT16 Indices[ ] =
-		{
-			0, 1, 2,
-			0, 2, 3
-		};
-
-		RendererPrimitive Square;
-
-		VertexAttributes VertexAttribs( 16 );
-
-		VertexAttribs.AddVertexAttribute( VERTEXATTRIBUTE_TYPE_FLOAT3,
-			VERTEXATTRIBUTE_INTENT_POSITION );
-
-		VertexAttribs.AddVertexAttribute( VERTEXATTRIBUTE_TYPE_FLOAT2,
-			VERTEXATTRIBUTE_INTENT_TEXTURECOORDINATE );
-
-		Square.Create( 4, 6, ( AUR_BYTE * )Vertices,
-			Indices, VertexAttribs, PRIMITIVE_TYPE_TRIANGLE_LIST );
-
 		AUR_UINT32 TestMaterial, SolidColourMaterial;
 
 		MaterialManager MatMan;
@@ -131,14 +97,14 @@ namespace Aura
 			return AUR_FAIL;
 		}
 
-		int Shader0 = 0;
-		float Colour[ 4 ] = { 1.0f, 0.0f, 0.0f, 1.0f };
-
 		Camera TestCamera;
 
 		TestCamera.SetAspectRatio( 800.0f / 480.0f );
 		TestCamera.SetProjectionMode( PROJECTIONMODE_PERSPECTIVE );
 		TestCamera.SetClippingPlanes( 1.0f, 100000.0f );
+		Vector3 CameraPosition( 0.0f, 2.0f, -5.0f );
+		TestCamera.SetPosition( CameraPosition );
+		TestCamera.SetLookPoint( Vector3( 0.0f, 0.0f, 0.0f ) );
 
 		Matrix4x4 IdentityMatrix;
 		Matrix4x4 ProjectionMatrix, ViewMatrix;
@@ -157,6 +123,25 @@ namespace Aura
 		TestCamera.GetViewMatrix( ViewMatrix );
 		ViewMatrix.AsArray( View );
 
+		Model TheModel( &MatMan );
+
+		Vector3 Rotate;
+
+		if( TheModel.LoadFromFile( "Test/Models/TestModel.aura" ) != AUR_OK )
+		{
+			std::cout << "[Aura::Game::Execute] <ERROR> "
+				"Failed to load model" << std::endl;
+
+			this->PlatformTerminate( );
+
+			return AUR_FAIL;
+		}
+
+		AUR_FLOAT32 Y = 0.0f;
+		GAMEPAD_STATE OldGamepadState;
+
+		AUR_FLOAT32 Shininess = 0.0f;
+
 		while( Run )
 		{
 			m_Gamepad.GetState( &GamepadState );
@@ -166,26 +151,45 @@ namespace Aura
 				Run = AUR_FALSE;
 			}
 
+			if( ( ( GamepadState.Buttons & GAMEPAD_BUTTON_Y ) !=
+					( OldGamepadState.Buttons & GAMEPAD_BUTTON_Y ) ) &&
+				( GamepadState.Buttons & GAMEPAD_BUTTON_Y ) )
+			{
+				AUR_FLOAT32 Y = -CameraPosition.GetY( );
+				CameraPosition.SetY( Y );
+				TestCamera.SetPosition( CameraPosition );
+			}
+
+			if( ( ( GamepadState.Buttons & GAMEPAD_BUTTON_X ) !=
+					( OldGamepadState.Buttons & GAMEPAD_BUTTON_X ) ) &&
+				( GamepadState.Buttons & GAMEPAD_BUTTON_X ) )
+			{
+				TheModel.ToggleWireframe( );
+			}
+
+			if( ( ( GamepadState.Buttons & GAMEPAD_BUTTON_B ) !=
+					( OldGamepadState.Buttons & GAMEPAD_BUTTON_B ) ) &&
+				( GamepadState.Buttons & GAMEPAD_BUTTON_B ) )
+			{
+				TheModel.ToggleNormals( );
+			}
+
 			TestCamera.CalculateViewMatrix( );
 			TestCamera.GetViewMatrix( ViewMatrix );
 			ViewMatrix.AsArray( View );
 
 			m_Renderer.Clear( );
 			MatMan.Activate( TestMaterial );
-			MatMan.SetConstantData( TestMaterial, "Texture", &Shader0 );
-			MatMan.SetConstantData( TestMaterial, "World", Identity );
-			MatMan.SetConstantData( TestMaterial, "View", View );
-			MatMan.SetConstantData( TestMaterial, "Projection",
-				Projection );
-			Square.Render( );
-			MatMan.Activate( SolidColourMaterial );
-			MatMan.SetConstantData( SolidColourMaterial, "Colour", Colour );
-			MatMan.SetConstantData( SolidColourMaterial, "World", Identity );
-			MatMan.SetConstantData( SolidColourMaterial, "View", View );
-			MatMan.SetConstantData( SolidColourMaterial, "Projection",
-				Projection );
-			Square.RenderWireframe( );
+			MatMan.SetConstantData( TestMaterial, "EyePosition",
+				&CameraPosition );
+			MatMan.SetConstantData( TestMaterial, "Shininess", &Shininess );
+			Y += 0.01f;
+			Rotate.SetY( Y );
+			TheModel.SetOrientation( Rotate );
+			TheModel.Render( TestCamera );
 			m_Renderer.SwapBuffers( );
+
+			memcpy( &OldGamepadState, &GamepadState, sizeof( GamepadState ) );
 		}
 
 		this->PlatformTerminate( );

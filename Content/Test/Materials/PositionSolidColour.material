@@ -1,4 +1,5 @@
 {
+	"name": "Solid Colour",
 	"shader": {
 		"source": [
 			{ "type": "vertex", "path": "Test/Shaders/PositionSolidColour.vsh" },

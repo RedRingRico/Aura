@@ -44,14 +44,14 @@ namespace Aura
 
 		fread( &TargaHeader, sizeof( TargaHeader ), 1, pFile );
 
-		fseek( pFile, TargaHeader.IDLength, SEEK_SET );
+		fseek( pFile, TargaHeader.IDLength, SEEK_CUR );
 
 		AUR_MEMSIZE ExpectedImageSize = TargaHeader.Width *
 			TargaHeader.Height * ( TargaHeader.BitsPerPixel / 8 );
 
 		AUR_BYTE *pImageData = new AUR_BYTE[ ExpectedImageSize ];
 
-		fread( pImageData, 1, ExpectedImageSize, pFile );
+		fread( pImageData, ExpectedImageSize, 1, pFile );
 
 		fclose( pFile );
 		pFile = AUR_NULL;
@@ -76,20 +76,6 @@ namespace Aura
 			{
 				Format = GL_RGBA;
 				Type = GL_UNSIGNED_BYTE;
-				for( AUR_MEMSIZE i = 0;
-					i < ( TargaHeader.Width * TargaHeader.Height ); ++i )
-				{
-					char ColourBuffer[ 4 ];
-					memcpy( ColourBuffer, &pImageData[ i * 4 ], 4 );
-					// R
-					pImageData[ i * 4 ] = ColourBuffer[ 2 ];
-					// G
-					pImageData[ ( i * 4 ) + 1 ] = ColourBuffer[ 3 ];
-					// B
-					pImageData[ ( i * 4 ) + 2 ] = ColourBuffer[ 0 ];
-					// A
-					pImageData[ ( i * 4 ) + 3 ] = ColourBuffer[ 1 ];
-				}
 				break;
 			}
 			default:

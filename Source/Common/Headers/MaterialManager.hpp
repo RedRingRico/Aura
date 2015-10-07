@@ -31,7 +31,7 @@ namespace Aura
 		AUR_UINT32 SetConstantData( const AUR_UINT32 p_MaterialHash,
 			const char *p_pConstantName, void *p_pData );
 
-		AUR_UINT32 GetMaterialHash( const char *p_pMaterialName,
+		AUR_UINT32 GetMaterialHash( const std::string &p_MaterialName,
 			AUR_UINT32 &p_MaterialHash );
 
 		AUR_UINT32 Purge( );
@@ -49,6 +49,7 @@ namespace Aura
 		MaterialManager &operator=( const MaterialManager &p_Other );
 
 		std::map< AUR_UINT32, Material * >	m_Materials;
+		std::map< std::string, Material * >	m_MaterialNames;
 		std::map< AUR_UINT32, Shader * >	m_Shaders;
 		std::map< AUR_UINT32, Texture * >	m_Textures;
 	};

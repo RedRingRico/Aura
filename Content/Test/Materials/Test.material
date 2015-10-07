@@ -1,4 +1,5 @@
 {
+	"name": "Test",
 	"shader": {
 		"source": [
 			{ "type": "vertex", "path": "Test/Shaders/Test.vsh" },
@@ -6,7 +7,7 @@
 		]
 	},
 	"texture": [
-		{ "type": "albedo", "path": "Test/Textures/512x512.tga" }
+		{ "type": "albedo", "path": "Test/Textures/TestModel.tga" }
 	]
 }
 

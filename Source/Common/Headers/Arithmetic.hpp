@@ -8,6 +8,7 @@ namespace Aura
 	const AUR_FLOAT32 Epsilon = 1.0e-10f;
 	const AUR_FLOAT32 HalfEpsilon = 1.0e-5f;
 	const AUR_FLOAT32 Pi = 3.1415926535897932384626433832975f;
+	const AUR_FLOAT32 PiOver360 = Pi / 360.0f;
 	const AUR_FLOAT32 Float32Infinite =
 		static_cast< AUR_FLOAT32 >( 0x7F800000 );
 

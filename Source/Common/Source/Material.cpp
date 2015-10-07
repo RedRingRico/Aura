@@ -62,6 +62,18 @@ namespace Aura
 
 		MATERIAL_SHADER MaterialShader;
 
+		if( MaterialJSON.HasMember( "name" ) )
+		{
+			m_Name = MaterialJSON[ "name" ].GetString( );
+		}
+		else
+		{
+			std::cout << "[Aura::Material::CreateFromFile] <ERROR> "
+				"No name available for material" << std::endl;
+
+			return AUR_FAIL;
+		}
+
 		if( MaterialJSON.HasMember( "shader" ) )
 		{
 			rapidjson::Value &ShaderRoot = MaterialJSON[ "shader" ];
@@ -308,6 +320,13 @@ namespace Aura
 	AUR_UINT32 Material::GetTextureCount( ) const
 	{
 		return m_TextureHashes.size( );
+	}
+
+	AUR_UINT32 Material::GetName( std::string &p_Name ) const
+	{
+		p_Name = m_Name;
+
+		return AUR_OK;
 	}
 }
 

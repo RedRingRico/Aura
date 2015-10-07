@@ -120,6 +120,12 @@ namespace Aura
 			MaxFragmentUniformVectors << std::endl;
 #endif // AURA_BUILD_DEBUG
 
+		glCullFace( GL_BACK );
+		glEnable( GL_CULL_FACE );
+		glFrontFace( GL_CCW );
+		glEnable( GL_DEPTH_TEST );
+		glDepthFunc( GL_LEQUAL );
+
 		return AUR_OK;
 	}
 

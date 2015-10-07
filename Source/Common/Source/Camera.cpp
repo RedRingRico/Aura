@@ -9,7 +9,7 @@ namespace Aura
 		m_Near( 1.0f ),
 		m_Far( 100.0f ),
 		m_AspectRatio( 1.0f ),
-		m_FieldOfView( Pi / 2.0f ),
+		m_FieldOfView( 45.0f ),
 		m_ProjectionMode( PROJECTIONMODE_SCREEN )
 	{
 		m_LookPoint.Set( 0.0f, 0.0f, -1.0f );
@@ -174,15 +174,14 @@ namespace Aura
 					return AUR_FAIL;
 				}
 
-				AUR_FLOAT32 D = 1.0f / tan( m_FieldOfView / 180.0f ) * Pi *
-					0.5f;
+				AUR_FLOAT32 D = 1.0f / tan( m_FieldOfView * PiOver360 );
 				AUR_FLOAT32 Reciprocal = 1.0f / ( m_Near - m_Far );
 
 				m_Projection.Identity( );
 
 				m_Projection( 0, 0 ) = D / m_AspectRatio;
 				m_Projection( 1, 1 ) = D;
-				m_Projection( 2, 2 ) = ( m_Near + m_Far ) * Reciprocal;
+				m_Projection( 2, 2 ) = ( m_Far + m_Near ) * Reciprocal;
 				m_Projection( 2, 3 ) = ( 2 * m_Near * m_Far ) * Reciprocal;
 				m_Projection( 3, 2 ) = -1.0f;
 				m_Projection( 3, 3 ) = 0.0f;
@@ -211,32 +210,29 @@ namespace Aura
 		AUR_FLOAT32 PositionY = -Up.Dot( m_Position );
 		AUR_FLOAT32 PositionZ = -Direction.Dot( m_Position );
 
-		// Pre-transpose the matrix, creating the matrix inverse as this is
-		// an orthogonal matrix, resulting in
-		// R R R 0
-		// U U U 0
-		// D D D 0
-		// P P P 1
+		// R U D P
+		// R U D P
+		// R U D P
+		// 0 0 0 1
 		// R == Right, U == Up, D == Direction, P == Position
-
-		m_View( 0, 3 ) = m_View( 1, 3 ) = m_View( 2, 3 ) = 0.0f;
+		m_View( 3, 0 ) = m_View( 3, 1 ) = m_View( 3, 2 ) = 0.0f;
 		m_View( 3, 3 ) = 1.0f;
 
 		m_View( 0, 0 ) = Right.GetX( );
-		m_View( 0, 1 ) = Right.GetY( );
-		m_View( 0, 2 ) = Right.GetZ( );
+		m_View( 1, 0 ) = Right.GetY( );
+		m_View( 2, 0 ) = Right.GetZ( );
 
-		m_View( 1, 0 ) = Up.GetX( );
+		m_View( 0, 1 ) = Up.GetX( );
 		m_View( 1, 1 ) = Up.GetY( );
-		m_View( 1, 2 ) = Up.GetZ( );
+		m_View( 2, 1 ) = Up.GetZ( );
 
-		m_View( 2, 0 ) = Direction.GetX( );
-		m_View( 2, 1 ) = Direction.GetY( );
+		m_View( 0, 2 ) = Direction.GetX( );
+		m_View( 1, 2 ) = Direction.GetY( );
 		m_View( 2, 2 ) = Direction.GetZ( );
 
-		m_View( 3, 0 ) = PositionX;
-		m_View( 3, 1 ) = PositionY;
-		m_View( 3, 2 ) = PositionZ;
+		m_View( 0, 3 ) = PositionX;
+		m_View( 1, 3 ) = PositionY;
+		m_View( 2, 3 ) = PositionZ;
 
 		return AUR_OK;
 	}

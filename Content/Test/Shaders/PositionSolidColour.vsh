@@ -6,6 +6,6 @@ uniform mat4 World;
 
 void main( )
 {
-	gl_Position = vec4( Position, 1.0 ) * World * View * Projection;
+	gl_Position = Projection * View * World * vec4( Position, 1.0 );
 }
 

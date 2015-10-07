@@ -51,6 +51,16 @@ namespace Aura
 			return AUR_OK;
 		}
 
+		std::pair<
+			std::map< std::string, Material * >::iterator, bool >InsertName;
+
+		std::string MaterialName;
+		pNewMaterial->GetName( MaterialName );
+
+		InsertName = m_MaterialNames.insert(
+			std::pair< std::string, Material * >( MaterialName,
+				pNewMaterial ) );
+
 		return AUR_OK;
 	}
 
@@ -134,6 +144,21 @@ namespace Aura
 		}
 
 		return ShaderItr->second->SetConstantData( p_pConstantName, p_pData );
+	}
+
+	AUR_UINT32 MaterialManager::GetMaterialHash(
+		const std::string &p_MaterialName, AUR_UINT32 &p_MaterialHash )
+	{
+		auto MaterialItr = m_MaterialNames.find( p_MaterialName );
+
+		if( MaterialItr == m_MaterialNames.end( ) )
+		{
+			return AUR_FAIL;
+		}
+
+		p_MaterialHash = MaterialItr->second->GetHash( );
+
+		return AUR_OK;
 	}
 
 	AUR_UINT32 MaterialManager::Purge( )

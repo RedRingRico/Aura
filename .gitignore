@@ -39,6 +39,9 @@ local.properties
 *.swo
 *.swn
 *.vim
+*.tga~
+*.png~
+*.blend1
 
 # Temporary Blender files #
 *.blend*

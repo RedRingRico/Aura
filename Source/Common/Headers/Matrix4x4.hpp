@@ -15,7 +15,11 @@ namespace Aura
 
 		void Identity( );
 
+		Matrix4x4 &RotateY( const AUR_FLOAT32 p_Y );
+
 		void AsArray( AUR_FLOAT32 *p_pMatrix ) const;
+
+		Matrix4x4 operator*( const Matrix4x4 &p_Other ) const;
 
 		// Row-column manipulator
 		inline AUR_FLOAT32 &operator( )( const AUR_MEMSIZE p_Row,

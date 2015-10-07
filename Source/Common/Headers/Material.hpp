@@ -26,6 +26,8 @@ namespace Aura
 
 		AUR_UINT32 GetTextureCount( ) const;
 
+		AUR_UINT32 GetName( std::string &p_Name ) const;
+
 	private:
 		Material( const Material &p_Other );
 		Material &operator=( const Material &p_Other );
@@ -34,6 +36,7 @@ namespace Aura
 		AUR_UINT32					m_Hash;
 		AUR_UINT32					m_ShaderHash;
 		std::vector< AUR_UINT32 >	m_TextureHashes;
+		std::string					m_Name;
 	};
 }
 
