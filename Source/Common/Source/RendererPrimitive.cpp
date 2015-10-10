@@ -113,6 +113,8 @@ namespace Aura
 			return AUR_FAIL;
 		}
 
+		m_PrimitiveType = p_PrimitiveType;
+
 		m_VertexStride = p_VertexAttributes.GetVertexStride( );
 
 		glGenBuffers( 1, &m_VertexBufferID );
@@ -417,10 +419,21 @@ namespace Aura
 
 		glBindVertexArray( m_WireframeVertexArrayID );
 
-		for( AUR_MEMSIZE Index = 0; Index < m_IndexCount; Index += 3 )
+		if( m_PrimitiveType == PRIMITIVE_TYPE_LINE_LIST )
 		{
-			glDrawElements( GL_LINE_LOOP, 3, GL_UNSIGNED_SHORT,
-				BUFFER_OFFSET( Index * sizeof( GLushort ) ) );
+			for( AUR_MEMSIZE Index = 0; Index < m_IndexCount; Index += 2 )
+			{
+				glDrawElements( GL_LINES, 3, GL_UNSIGNED_SHORT,
+					BUFFER_OFFSET( Index * sizeof( GLushort ) ) );
+			}
+		}
+		else
+		{
+			for( AUR_MEMSIZE Index = 0; Index < m_IndexCount; Index += 3 )
+			{
+				glDrawElements( GL_LINE_LOOP, 3, GL_UNSIGNED_SHORT,
+					BUFFER_OFFSET( Index * sizeof( GLushort ) ) );
+			}
 		}
 
 		glBindVertexArray( 0 );

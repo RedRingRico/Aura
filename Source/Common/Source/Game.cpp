@@ -8,6 +8,7 @@
 #include <MaterialManager.hpp>
 #include <Camera.hpp>
 #include <Model.hpp>
+#include <Arithmetic.hpp>
 #include <cstring>
 
 namespace Aura
@@ -102,9 +103,9 @@ namespace Aura
 		TestCamera.SetAspectRatio( 800.0f / 480.0f );
 		TestCamera.SetProjectionMode( PROJECTIONMODE_PERSPECTIVE );
 		TestCamera.SetClippingPlanes( 1.0f, 100000.0f );
-		Vector3 CameraPosition( 0.0f, 2.0f, -5.0f );
+		Vector3 CameraPosition( 0.0f, -350.0f, 500.0f );
 		TestCamera.SetPosition( CameraPosition );
-		TestCamera.SetLookPoint( Vector3( 0.0f, 0.0f, 0.0f ) );
+		TestCamera.SetLookPoint( Vector3( 0.0f, 100.0f, 0.0f ) );
 
 		Matrix4x4 IdentityMatrix;
 		Matrix4x4 ProjectionMatrix, ViewMatrix;
@@ -127,7 +128,7 @@ namespace Aura
 
 		Vector3 Rotate;
 
-		if( TheModel.LoadFromFile( "Test/Models/TestModel.aura" ) != AUR_OK )
+		if( TheModel.LoadFromFile( "Test/Models/WiggleBox.aura" ) != AUR_OK )
 		{
 			std::cout << "[Aura::Game::Execute] <ERROR> "
 				"Failed to load model" << std::endl;
@@ -173,6 +174,33 @@ namespace Aura
 			{
 				TheModel.ToggleNormals( );
 			}
+
+			if( ( ( GamepadState.Buttons & GAMEPAD_BUTTON_A ) !=
+					( OldGamepadState.Buttons & GAMEPAD_BUTTON_A ) ) &&
+				( GamepadState.Buttons & GAMEPAD_BUTTON_A ) )
+			{
+				CameraPosition.Set( 0.0f, -350.0f, 500.0f );
+			}
+
+			if( Aura::Absolute( GamepadState.AnalogueStick[ 0 ].X ) >
+				GAMEPAD_DEADZONE )
+			{
+				AUR_FLOAT32 X = CameraPosition.GetX( );
+				X += GamepadState.AnalogueStick[ 0 ].X * 10.0f;
+
+				CameraPosition.SetX( X );
+			}
+
+			if( Aura::Absolute( GamepadState.AnalogueStick[ 0 ].Y ) >
+				GAMEPAD_DEADZONE )
+			{
+				AUR_FLOAT32 Y = CameraPosition.GetY( );
+				Y += GamepadState.AnalogueStick[ 0 ].Y * 10.0f;
+
+				CameraPosition.SetY( Y );
+			}
+
+			TestCamera.SetPosition( CameraPosition );
 
 			TestCamera.CalculateViewMatrix( );
 			TestCamera.GetViewMatrix( ViewMatrix );

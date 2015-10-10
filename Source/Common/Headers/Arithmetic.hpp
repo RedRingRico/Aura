@@ -14,7 +14,7 @@ namespace Aura
 
 	AUR_BOOL IsZero( AUR_FLOAT32 p_Value );
 	AUR_BOOL IsEqual( AUR_FLOAT32 p_Left, AUR_FLOAT32 p_Right );
-	AUR_BOOL Absolute( AUR_FLOAT32 p_Value );
+	AUR_FLOAT32 Absolute( AUR_FLOAT32 p_Value );
 	AUR_FLOAT32 SquareRoot( AUR_FLOAT32 p_Value );
 	AUR_FLOAT32 InvSquareRoot( AUR_FLOAT32 p_Value );
 	void SinCos( AUR_FLOAT32 p_Angle, AUR_FLOAT32 &p_Sine,

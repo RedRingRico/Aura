@@ -24,17 +24,32 @@ namespace Aura
 		AUR_UINT16	TriangleStripCount;
 		AUR_UINT16	TriangleFanCount;
 	};
-#pragma pack( )
+
+	struct MODEL_SKELETON
+	{
+		AUR_BYTE	JointCount;
+	};
+
+	struct MODEL_JOINT
+	{
+		AUR_UINT32	Flags;
+		AUR_BYTE	Parent;
+		AUR_FLOAT32	Position[ 3 ];
+		AUR_FLOAT32	Orientation[ 4 ];
+	};
+#pragma pack( pop )
 
 	const AUR_UINT16 CHUNK_MESH				= 0x0001;
 	const AUR_UINT16 CHUNK_MATERIAL			= 0x0002;
-	const AUR_UINT16 CHUNK_JOINT			= 0x0004;
+	const AUR_UINT16 CHUNK_SKELETON			= 0x0004;
 	const AUR_UINT16 CHUNK_TRIANGLE_LIST	= 0x0008;
 	const AUR_UINT16 CHUNK_TRIANGLE_STRIP	= 0x0010;
 	const AUR_UINT16 CHUNK_TRIANGLE_FAN		= 0x0020;
 
 	const AUR_UINT32 MESH_NORMAL_TANGENT	= 0x00000001;
 	const AUR_UINT32 MESH_NORMAL_LOCAL		= 0x00000002;
+
+	const AUR_UINT32 JOINT_END				= 0x00000001;
 
 	class Mesh;
 	class MaterialManager;
@@ -55,19 +70,24 @@ namespace Aura
 
 		void ToggleWireframe( );
 		void ToggleNormals( );
+		void ToggleSkeleton( );
 
 	private:
 		Model( const Model &p_Other );
 		Model &operator=( const Model &p_Other );
 
 		AUR_UINT32 ReadMeshData( FILE *p_pFile );
+		AUR_UINT32 ReadSkeletonData( FILE *p_pFile );
 
-		Vector3					m_Position;
-		Vector3					m_Scale;
-		Vector3					m_Orientation;
-		std::vector< Mesh * >	m_MeshArray;
-		MaterialManager			*m_pMaterialManager;
-		std::string				m_Name;
+		Vector3						m_Position;
+		Vector3						m_Scale;
+		Vector3						m_Orientation;
+		std::vector< Mesh * >		m_MeshArray;
+		std::vector< Mesh * >		m_JointMeshArray;
+		std::vector< MODEL_JOINT >	m_JointArray;
+		MaterialManager				*m_pMaterialManager;
+		std::string					m_Name;
+		AUR_BOOL					m_DrawSkeleton;
 	};
 }
 

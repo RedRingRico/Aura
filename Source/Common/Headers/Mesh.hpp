@@ -31,6 +31,9 @@ namespace Aura
 		void ToggleWireframe( );
 		void ToggleNormals( );
 
+		void SetWireframeColour( const AUR_FLOAT32 p_Red,
+			const AUR_FLOAT32 p_Green, const AUR_FLOAT32 p_Blue );
+
 	private:
 		Mesh( const Mesh &p_Other );
 		Mesh &operator=( const Mesh &p_Other );
@@ -54,6 +57,8 @@ namespace Aura
 		Matrix4x4	m_RotationY;
 		Matrix4x4	m_RotationZ;
 		Matrix4x4	m_Translation;
+
+		AUR_FLOAT32	m_WireframeColour[ 4 ];
 	};
 }
 

@@ -49,6 +49,8 @@ namespace Aura
 		Vector3 operator-( const Vector3 &p_Other ) const;
 
 		Vector3 &operator+=( const Vector3 &p_Other );
+		Vector3 &operator*=( const Vector3 &p_Other );
+		Vector3 &operator*=( const AUR_FLOAT32 p_Scalar );
 
 	private:
 		AUR_FLOAT32 m_X;

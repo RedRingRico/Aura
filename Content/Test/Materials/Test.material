@@ -7,7 +7,7 @@
 		]
 	},
 	"texture": [
-		{ "type": "albedo", "path": "Test/Textures/TestModel.tga" }
+		{ "type": "albedo", "path": "Test/Textures/White.tga" }
 	]
 }
 

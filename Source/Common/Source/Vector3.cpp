@@ -201,5 +201,23 @@ namespace Aura
 
 		return *this;
 	}
+
+	Vector3 &Vector3::operator*=( const Vector3 &p_Other )
+	{
+		m_X *= p_Other.m_X;
+		m_Y *= p_Other.m_Y;
+		m_Z *= p_Other.m_Z;
+
+		return *this;
+	}
+
+	Vector3 &Vector3::operator*=( const AUR_FLOAT32 p_Scalar )
+	{
+		m_X *= p_Scalar;
+		m_Y *= p_Scalar;
+		m_Z *= p_Scalar;
+
+		return *this;
+	}
 }
 

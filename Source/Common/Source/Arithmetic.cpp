@@ -13,7 +13,7 @@ namespace Aura
 		return IsZero( p_Left - p_Right );
 	}
 
-	AUR_BOOL Absolute( AUR_FLOAT32 p_Value )
+	AUR_FLOAT32 Absolute( AUR_FLOAT32 p_Value )
 	{
 		return fabsf( p_Value );
 	}

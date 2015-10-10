@@ -16,6 +16,9 @@ namespace Aura
 		// BAD!
 		m_pMaterialManager->GetMaterialHash( "Solid Colour",
 			m_SolidColourMaterial );
+		
+		m_WireframeColour[ 0 ] = m_WireframeColour[ 2 ] = 0.0f;
+		m_WireframeColour[ 1 ] = m_WireframeColour[ 3 ] = 1.0f;
 	}
 
 	Mesh::~Mesh( )
@@ -69,12 +72,10 @@ namespace Aura
 
 		if( m_DrawWireframe )
 		{
-			AUR_FLOAT32 WireframeColour[ 4 ] = { 0.0f, 1.0f, 0.0f, 1.0f };
-
 			m_pMaterialManager->Activate( m_SolidColourMaterial );
 
 			m_pMaterialManager->SetConstantData( m_SolidColourMaterial,
-				"Colour", WireframeColour );
+				"Colour", m_WireframeColour );
 			m_pMaterialManager->SetConstantData( m_SolidColourMaterial,
 				"World", World );
 			m_pMaterialManager->SetConstantData( m_SolidColourMaterial,
@@ -141,6 +142,14 @@ namespace Aura
 	void Mesh::ToggleNormals( )
 	{
 		m_DrawNormals = !m_DrawNormals;
+	}
+
+	void Mesh::SetWireframeColour( const AUR_FLOAT32 p_Red,
+			const AUR_FLOAT32 p_Green, const AUR_FLOAT32 p_Blue )
+	{
+		m_WireframeColour[ 0 ] = p_Red;
+		m_WireframeColour[ 1 ] = p_Green;
+		m_WireframeColour[ 2 ] = p_Blue;
 	}
 }
 

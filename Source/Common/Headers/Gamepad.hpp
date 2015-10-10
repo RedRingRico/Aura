@@ -5,6 +5,8 @@
 
 namespace Aura
 {
+	const AUR_FLOAT32 GAMEPAD_DEADZONE = 0.2f;
+
 	class Gamepad : public InputDevice
 	{
 	public:

@@ -12,7 +12,9 @@
 namespace Aura
 {
 	Model::Model( MaterialManager *p_pMaterialManager ) :
-		m_pMaterialManager( p_pMaterialManager )
+		m_pMaterialManager( p_pMaterialManager ),
+		m_Name( "" ),
+		m_DrawSkeleton( AUR_FALSE )
 	{
 	}
 
@@ -76,6 +78,20 @@ namespace Aura
 					}
 					break;
 				}
+				case CHUNK_SKELETON:
+				{
+					if( this->ReadSkeletonData( pFile ) != AUR_OK )
+					{
+						std::cout << "[Aura::Model::LoadFromFile] <ERROR> "
+							"Failed to read skeleton data" << std::endl;
+
+						fclose( pFile );
+						pFile = AUR_NULL;
+
+						return AUR_FAIL;
+					}
+					break;
+				}
 				case CHUNK_END:
 				{
 					break;
@@ -127,6 +143,15 @@ namespace Aura
 			m_MeshArray[ Mesh ]->Render( p_Camera );
 		}
 
+		//if( m_DrawSkeleton == AUR_TRUE )
+		{
+			for( AUR_MEMSIZE Mesh = 0; Mesh < m_JointMeshArray.size( );
+				++Mesh )
+			{
+				m_JointMeshArray[ Mesh ]->Render( p_Camera );
+			}
+		}
+
 		return AUR_OK;
 	}
 
@@ -135,6 +160,15 @@ namespace Aura
 		for( AUR_MEMSIZE Mesh = 0; Mesh < m_MeshArray.size( ); ++Mesh )
 		{
 			m_MeshArray[ Mesh ]->SetOrientation( p_Orientation );
+		}
+
+		//if( m_DrawSkeleton == AUR_TRUE )
+		{
+			for( AUR_MEMSIZE Mesh = 0; Mesh < m_JointMeshArray.size( );
+				++Mesh )
+			{
+				m_JointMeshArray[ Mesh ]->SetOrientation( p_Orientation );
+			}
 		}
 	}
 
@@ -152,6 +186,11 @@ namespace Aura
 		{
 			m_MeshArray[ Mesh ]->ToggleNormals( );
 		}
+	}
+
+	void Model::ToggleSkeleton( )
+	{
+		m_DrawSkeleton = !m_DrawSkeleton;
 	}
 
 	AUR_UINT32 Model::ReadMeshData( FILE *p_pFile )
@@ -215,6 +254,123 @@ namespace Aura
 			std::cout << "[Aura::Model::ReadMeshData] <ERROR> "
 				"Unexpected chunk, was expecting an end chunk" << std::endl;
 
+			return AUR_FAIL;
+		}
+
+		return AUR_OK;
+	}
+
+	AUR_UINT32 Model::ReadSkeletonData( FILE *p_pFile )
+	{
+		MODEL_SKELETON ModelSkeleton;
+
+		fread( &ModelSkeleton, sizeof( ModelSkeleton ), 1, p_pFile );
+
+		struct JOINTVERTEX
+		{
+			AUR_FLOAT32	Position[ 3 ];
+		};
+
+		VertexAttributes VertexAttribs( 16 );
+
+		VertexAttribs.AddVertexAttribute( VERTEXATTRIBUTE_TYPE_FLOAT3,
+			VERTEXATTRIBUTE_INTENT_POSITION );
+
+		for( AUR_BYTE JointIndex = 0; JointIndex < ModelSkeleton.JointCount;
+			++JointIndex )
+		{
+			MODEL_JOINT Joint;
+			fread( &Joint, sizeof( Joint ), 1, p_pFile );
+
+			Vector3 BoneVertices[ 6 ];
+			// Head
+			BoneVertices[ 0 ].Set( 0.0f, 0.0f, 0.0f );
+			// Tail
+			BoneVertices[ 1 ].Set( 0.0f, 1.0f, 0.0f );
+			// Rear-left
+			BoneVertices[ 2 ].Set( -0.1f, 0.1f, 0.1f );
+			// Rear-right
+			BoneVertices[ 3 ].Set( 0.1f, 0.1f, 0.1f );
+			// Front-left
+			BoneVertices[ 4 ].Set( -0.1f, 0.1f, -0.1f );
+			// Front-right
+			BoneVertices[ 5 ].Set( 0.1f, 0.1f, -0.1f );
+
+			if( Joint.Parent < 255 )
+			{
+				Vector3 Vertices[ 2 ];
+				AUR_UINT16 Indices[ 24 ] =
+				{
+					0, 2,
+					0, 3,
+					0, 4,
+					0, 5,
+					1, 2,
+					1, 3,
+					1, 4,
+					1, 5,
+					2, 3,
+					3, 5,
+					5, 4,
+					4, 2
+				};
+				// Head
+				memcpy( &Vertices[ 0 ],
+					m_JointArray[ Joint.Parent ].Position,
+					sizeof( Vertices[ 0 ] ) );
+
+				// Tail
+				memcpy( &Vertices[ 1 ], Joint.Position,
+					sizeof( Vertices[ 0 ] ) );
+
+				// Scale up
+				AUR_FLOAT32 Scale = Vertices[ 1 ].Distance( Vertices[ 0 ] );
+
+				RendererPrimitive *pJointPrimitive = new RendererPrimitive( );
+
+				for( AUR_MEMSIZE Vertex = 0; Vertex < sizeof( BoneVertices ) /
+					sizeof( BoneVertices[ 0 ] ); ++Vertex )
+				{
+					BoneVertices[ Vertex ] *= Scale;
+					BoneVertices[ Vertex ] += Vertices[ 0 ];
+				}
+
+				pJointPrimitive->Create( 6, 24,
+					reinterpret_cast< AUR_BYTE * >( BoneVertices ), Indices,
+					VertexAttribs, PRIMITIVE_TYPE_LINE_LIST );
+
+				AUR_UINT32 MaterialHash;
+				m_pMaterialManager->GetMaterialHash( "Test", MaterialHash );
+
+				Mesh *pJointMesh = new Mesh( m_pMaterialManager );
+
+				pJointMesh->SetMaterial( MaterialHash );
+
+				pJointMesh->AddPrimitive( pJointPrimitive );
+
+				pJointMesh->ToggleWireframe( );
+				pJointMesh->SetWireframeColour( 1.0f, 0.0f, 1.0f );
+				m_JointMeshArray.push_back( pJointMesh );
+			}
+			else
+			{
+			}
+
+			if( !( Joint.Flags & JOINT_END ) )
+			{
+				m_JointArray.push_back( Joint );
+			}
+		}
+
+		CHUNK EndChunk;
+
+		if( ReadChunk( EndChunk, p_pFile ) != AUR_OK )
+		{
+			return AUR_FAIL;
+		}
+
+		if( ( EndChunk.Type != CHUNK_END ) && ( EndChunk.Size != 0 ) )
+		{
 			return AUR_FAIL;
 		}
 

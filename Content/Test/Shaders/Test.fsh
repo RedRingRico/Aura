@@ -10,7 +10,7 @@ varying vec2 f_ST;
 
 void main( )
 {
-	vec3 LightPosition = vec3( 2.0, 3.0, 1.0 );
+	vec3 LightPosition = vec3( 0.0, 50.0, 170.0 );
 	vec3 LightColour = vec3( 1.0, 1.0, 1.0 );
 	vec3 L = normalize( LightPosition - f_Position );
 	float DiffuseLight = max( dot( f_Normal, L ), 0.0 );
