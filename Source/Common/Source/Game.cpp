@@ -13,8 +13,10 @@
 #include <CLOC.hpp>
 #include <Timer.hpp>
 #include <FreeTimer.hpp>
+#include <GitVersion.hpp>
 #include <cstring>
 #include <inttypes.h>
+#include <sstream>
 
 namespace Aura
 {
@@ -179,6 +181,13 @@ namespace Aura
 		AUR_UINT32 FrameCount = 0UL;
 		AUR_UINT32 FrameRate = 0UL;
 
+		std::stringstream InfoString1;
+		InfoString1 << "Aura [" << GIT_TAG_NAME << "]";
+
+		std::stringstream InfoString2;
+		InfoString2 << GIT_BUILD_VERSION;
+
+
 		while( Run )
 		{
 			m_Gamepad.GetState( &GamepadState );
@@ -258,13 +267,34 @@ namespace Aura
 				m_pTestFont->GetLineHeight( ), "%u", FrameRate );
 
 			m_pTestFont->RenderString( ScreenCamera, 0.0f,
-				480.0f - m_pTestFont->GetLineHeight( ), "%d lines of code",
+				480.0f, "%d lines of code",
 				CLOC_LINECOUNT );
 			m_pTestFont->RenderString( ScreenCamera, 0.0f,
-				480.0f - ( m_pTestFont->GetLineHeight( ) * 2.0f ),
+				480.0f - ( m_pTestFont->GetLineHeight( ) * 1.4f ),
 				"Elapsed time: %" PRIu64, GameTimer.GetSeconds( ) );
+
+			AUR_FLOAT32 InfoLength;
+
+			m_pTestFont->MeasureString( InfoLength,
+				InfoString1.str( ).c_str( ) );
+
+			m_pTestFont->RenderString( ScreenCamera,
+				400.0f - ( InfoLength / 2.0f ), 
+				480.0f - m_pTestFont->GetLineHeight( ) * 1.5f,
+				InfoString1.str( ).c_str( ) );
+
+			m_pTestFont->MeasureString( InfoLength,
+				InfoString2.str( ).c_str( ) );
+
+			m_pTestFont->RenderString( ScreenCamera,
+				400.0f - ( InfoLength / 2.0f ), 
+				480.0f,
+				InfoString2.str( ).c_str( ) );
+
 			m_Renderer.SwapBuffers( );
 			
+			++FrameCount;
+
 			if( FrameClock.GetSeconds( ) >= 1 )
 			{
 				FrameRate = FrameCount;
@@ -272,7 +302,6 @@ namespace Aura
 				FrameClock.Stop( );
 				FrameClock.Start( );
 			}
-			++FrameCount;
 
 			memcpy( &OldGamepadState, &GamepadState, sizeof( GamepadState ) );
 			++Counter;

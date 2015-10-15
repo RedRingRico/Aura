@@ -33,7 +33,7 @@ cat > ${ROOTDIR}/Build/PND/Aura_PXML.xml << __EOF__
 			<description lang="en_US">A cyberpunk-themed first person shooter</description>
 			<description lang="en_GB">A cyberpunk-themed first person shooter</description>
 		</descriptions>
-		<exec command="RunAura.sh"/>
+		<exec command="Aura"/>
 		<author name="Rico Tyrell" email="aura@redringrico.com"/>
 		<categories>
 			<category name="Game">
@@ -47,7 +47,8 @@ cat > ${ROOTDIR}/Build/PND/Aura_PXML.xml << __EOF__
 </PXML>
 __EOF__
 
-cat > ${ROOTDIR}/Build/PND/RunAura.sh << __EOF__
+cat > ${ROOTDIR}/Build/PND/RunAura.sh << '__EOF__'
+#!/bin/bash
 cat /proc/pandora/nub0/mode > /tmp/nub0mode_old
 cat /proc/pandora/nub1/mode > /tmp/nub1mode_old
 /usr/pandora/scripts/op_nubchange.sh absolute absolute

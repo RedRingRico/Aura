@@ -16,10 +16,10 @@ namespace Aura
 
 	struct GLYPH
 	{
-		AUR_UINT16	Width;
-		AUR_UINT16	Height;
-		AUR_UINT16	BearingY;
-		AUR_UINT16	XAdvance;
+		AUR_FLOAT32	Width;
+		AUR_FLOAT32	Height;
+		AUR_FLOAT32	BearingY;
+		AUR_FLOAT32	XAdvance;
 		GLYPHVERTEX	Polygon[ 4 ];
 	};
 
@@ -37,6 +37,9 @@ namespace Aura
 
 		AUR_UINT32 RenderString( const Camera &p_Camera, AUR_FLOAT32 p_X,
 			AUR_FLOAT32 p_Y, const char *p_pFormat, ... );
+
+		AUR_UINT32 MeasureString( AUR_FLOAT32 &p_Width, const char *p_pFormat,
+			... );
 
 		AUR_FLOAT32 GetLineHeight( ) const;
 

@@ -175,10 +175,17 @@ namespace Aura
 						Glyph.Polygon[ 3 ].ST[ 1 ] = ( Y + Height ) /
 							TextureHeight;
 
-						Glyph.Width = ( AUR_UINT16 )( Width - X );
-						Glyph.Height = ( AUR_UINT16 )( Height - Y );
+						Glyph.Width = Width;
+						Glyph.Height = Height;
 
-						Glyph.XAdvance = atoi(
+						// Bearing Y
+						StringBuffer =
+							pCharNode->first_attribute( "offset" )->value( );
+						StartPosition = StringBuffer.find_first_of( ' ' );
+						StringBuffer = StringBuffer.substr( StartPosition );
+						Glyph.BearingY = Height - atof( StringBuffer.c_str( ) );
+
+						Glyph.XAdvance = atof(
 							pCharNode->first_attribute(
 								"advance" )->value( ) );
 
@@ -263,10 +270,15 @@ namespace Aura
 			GlyphPolygon[ 2 ].Position[ 0 ] += XPosition;
 			GlyphPolygon[ 3 ].Position[ 0 ] += XPosition;
 
+			GlyphPolygon[ 0 ].Position[ 1 ] -= Glyph->second.BearingY;
+			GlyphPolygon[ 1 ].Position[ 1 ] -= Glyph->second.BearingY;
+			GlyphPolygon[ 2 ].Position[ 1 ] -= Glyph->second.BearingY;
+			GlyphPolygon[ 3 ].Position[ 1 ] -= Glyph->second.BearingY;
+
 			memcpy( &GlyphString[ Char * 4 ], GlyphPolygon,
 				sizeof( GlyphPolygon ) );
 
-			XPosition += ( AUR_FLOAT32 )Glyph->second.XAdvance;
+			XPosition += Glyph->second.XAdvance;
 		}
 
 		VertexAttributes VertexAttribs( 16 );
@@ -310,6 +322,51 @@ namespace Aura
 			GL_ZERO );
 		StringPrimitive.Render( );
 		glDisable( GL_BLEND );
+
+		return AUR_OK;
+	}
+
+	AUR_UINT32 Font::MeasureString( AUR_FLOAT32 &p_Width,
+		const char *p_pFormat, ... )
+	{
+		AUR_MEMSIZE StringLength = 0;
+		va_list ArgPtr;
+
+		va_start( ArgPtr, p_pFormat );
+		StringLength = vsnprintf( AUR_NULL, 0, p_pFormat, ArgPtr );
+		va_end( ArgPtr );
+
+		++StringLength;
+
+		char CompleteString[ StringLength ];
+		AUR_SINT32 Return;
+
+		va_start( ArgPtr, p_pFormat );
+		Return = vsnprintf( CompleteString, StringLength, p_pFormat,
+			ArgPtr );
+		va_end( ArgPtr );
+
+		if( Return < 0 )
+		{
+			std::cout << "[Aura::Font::MeasureString] <ERROR> "
+				"Something went wrong creating the formatted string" <<
+				std::endl;
+
+			return AUR_FAIL;
+		}
+
+		CompleteString[ StringLength - 1 ] = '\0';
+
+		RendererPrimitive StringPrimitives;
+
+		p_Width = 0.0f;
+
+		for( AUR_MEMSIZE Char = 0; Char < StringLength; ++Char )
+		{
+			auto Glyph = m_CharGlyphMap.find( CompleteString[ Char ] );
+
+			p_Width += Glyph->second.XAdvance;
+		}
 
 		return AUR_OK;
 	}
