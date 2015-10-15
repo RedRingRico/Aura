@@ -64,7 +64,8 @@ CPPFLAGS	=	-c -DAURA_BUILD_$(BUILD_DEF) \
 				-DAURA_BITSIZE_$(BITSIZE) -DAURA_ARCH_$(BUILD_ARCH) \
 				-DSUPPORT_X11 \
 				-I$(TOPSRC)/$(PLATFORM)/Headers -I$(TOPSRC)/Common/Headers \
-				-I$(TOPSRC)/Libs
+				-I$(TOPSRC)/Libs \
+				-I$(TOPSRC)/Libs/rapidxml
 SYSIPATH	=
 INCPATH		= -I/opt/Imagination/PowerVR_Graphics/PowerVR_SDK/SDK_3.5/Builds/Include
 SYSLPATH	=	

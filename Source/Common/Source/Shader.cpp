@@ -191,7 +191,7 @@ namespace Aura
 			case CONSTANT_TYPE_UNKNOWN:
 			{
 				std::cout << "[Aura::Shader::SetConstantData] <ERROR> "
-					"Unknown constant type" << std::endl;
+					"Unknown constant type for index " << p_Index << std::endl;
 
 				return AUR_FAIL;
 			}
@@ -300,8 +300,8 @@ namespace Aura
 			}
 			case CONSTANT_TYPE_UNKNOWN:
 			{
-				std::cout << "[Aura::Shader::Set( *Constant )Data] <ERROR> "
-					"Unknown constant type" << std::endl;
+				std::cout << "[Aura::Shader::SetConstantData] <ERROR> "
+					"Unknown constant type for " << p_pName << std::endl;
 
 				return AUR_FAIL;
 			}

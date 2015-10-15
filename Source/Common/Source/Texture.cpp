@@ -113,6 +113,8 @@ namespace Aura
 		m_Width = TargaHeader.Width;
 		m_Height = TargaHeader.Height;
 
+		std::cout << "Texture ID: " << m_TextureID << std::endl;
+
 		return AUR_OK;
     }
 

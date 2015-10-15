@@ -5,6 +5,7 @@
 #include <Window.hpp>
 #include <Renderer.hpp>
 #include <Gamepad.hpp>
+#include <Font.hpp>
 
 namespace Aura
 {
@@ -24,6 +25,7 @@ namespace Aura
 		Window		m_Window;
 		Renderer	m_Renderer;
 		Gamepad		m_Gamepad;
+		Font		*m_pTestFont;
 	};
 }
 

@@ -9,6 +9,7 @@
 #include <Camera.hpp>
 #include <Model.hpp>
 #include <Arithmetic.hpp>
+#include <Font.hpp>
 #include <cstring>
 
 namespace Aura
@@ -78,6 +79,18 @@ namespace Aura
 
 		MaterialManager MatMan;
 
+		AUR_UINT32 SpriteMat;
+
+		if( MatMan.CreateFromFile( "Test/Materials/Sprite.material",
+			SpriteMat ) != AUR_OK )
+		{
+			return AUR_FAIL;
+		}
+
+		m_pTestFont = new Font( &MatMan );
+		m_pTestFont->LoadGlyphsFromFile( "Test/Fonts/Orbitron_Bold_14.xml" );
+		m_pTestFont->LoadTextureFromFile( "Test/Textures/Orbitron_Bold_14.tga" );
+
 		if( MatMan.CreateFromFile( "Test/Materials/Test.material",
 			TestMaterial ) != AUR_OK )
 		{
@@ -142,6 +155,8 @@ namespace Aura
 		GAMEPAD_STATE OldGamepadState;
 
 		AUR_FLOAT32 Shininess = 0.0f;
+
+		AUR_UINT32 Counter = 0UL;
 
 		while( Run )
 		{
@@ -215,9 +230,12 @@ namespace Aura
 			Rotate.SetY( Y );
 			TheModel.SetOrientation( Rotate );
 			TheModel.Render( TestCamera );
+			m_pTestFont->RenderString( TestCamera, 0.0f, -100.0f, "TESTING: %u",
+				Counter );
 			m_Renderer.SwapBuffers( );
 
 			memcpy( &OldGamepadState, &GamepadState, sizeof( GamepadState ) );
+			++Counter;
 		}
 
 		this->PlatformTerminate( );

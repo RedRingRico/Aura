@@ -1,0 +1,12 @@
+{
+	"name": "Sprite",
+	"shader":
+	{
+		"source":
+		[
+			{ "type": "vertex", "path": "Test/Shaders/Sprite.vsh" },
+			{ "type": "fragment", "path": "Test/Shaders/Sprite.fsh" }
+		]
+	}
+}
+

@@ -23,22 +23,28 @@ namespace Aura
 		GLYPHVERTEX	Polygon[ 4 ];
 	};
 
+	class Camera;
+	class MaterialManager;
+
 	class Font
 	{
 	public:
-		Font( );
+		explicit Font( MaterialManager *p_pMaterialManager );
 		~Font( );
 
 		AUR_UINT32 LoadTextureFromFile( const std::string &p_FileName );
 		AUR_UINT32 LoadGlyphsFromFile( const std::string &p_FileName );
 
-		AUR_UINT32 RenderString( AUR_FLOAT32 p_X, AUR_FLOAT32 p_Y,
-			const char *p_pFormat, ... );
+		AUR_UINT32 RenderString( const Camera &p_Camera, AUR_FLOAT32 p_X,
+			AUR_FLOAT32 p_Y, const char *p_pFormat, ... );
 
 	private:
 		std::map< char, GLYPH >	m_CharGlyphMap;
 		Texture					m_Texture;
 		AUR_UINT32				m_Hash;
+		AUR_UINT32				m_MaterialHash;
+		MaterialManager			*m_pMaterialManager;
+		AUR_FLOAT32				m_Colour[ 4 ];
 	};
 }
 
