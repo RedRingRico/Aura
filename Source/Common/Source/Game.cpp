@@ -11,7 +11,10 @@
 #include <Arithmetic.hpp>
 #include <Font.hpp>
 #include <CLOC.hpp>
+#include <Timer.hpp>
+#include <FreeTimer.hpp>
 #include <cstring>
+#include <inttypes.h>
 
 namespace Aura
 {
@@ -167,6 +170,15 @@ namespace Aura
 
 		AUR_UINT32 Counter = 0UL;
 
+		Timer FrameClock;
+		FrameClock.Start( );
+
+		FreeTimer GameTimer;
+		GameTimer.Start( );
+
+		AUR_UINT32 FrameCount = 0UL;
+		AUR_UINT32 FrameRate = 0UL;
+
 		while( Run )
 		{
 			m_Gamepad.GetState( &GamepadState );
@@ -241,12 +253,26 @@ namespace Aura
 			TheModel.Render( TestCamera );
 			ScreenCamera.CalculateViewMatrix( );
 			ScreenCamera.CalculateProjectionMatrix( );
+
 			m_pTestFont->RenderString( ScreenCamera, 0.0f,
-				m_pTestFont->GetLineHeight( ), "TESTING: %u", Counter );
+				m_pTestFont->GetLineHeight( ), "%u", FrameRate );
+
 			m_pTestFont->RenderString( ScreenCamera, 0.0f,
 				480.0f - m_pTestFont->GetLineHeight( ), "%d lines of code",
 				CLOC_LINECOUNT );
+			m_pTestFont->RenderString( ScreenCamera, 0.0f,
+				480.0f - ( m_pTestFont->GetLineHeight( ) * 2.0f ),
+				"Elapsed time: %" PRIu64, GameTimer.GetSeconds( ) );
 			m_Renderer.SwapBuffers( );
+			
+			if( FrameClock.GetSeconds( ) >= 1 )
+			{
+				FrameRate = FrameCount;
+				FrameCount = 0UL;
+				FrameClock.Stop( );
+				FrameClock.Start( );
+			}
+			++FrameCount;
 
 			memcpy( &OldGamepadState, &GamepadState, sizeof( GamepadState ) );
 			++Counter;
