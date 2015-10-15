@@ -170,7 +170,7 @@ namespace Aura
 
 		AUR_UINT32 Counter = 0UL;
 
-		Timer FrameClock;
+		FreeTimer FrameClock;
 		FrameClock.Start( );
 
 		FreeTimer GameTimer;
