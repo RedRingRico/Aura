@@ -112,6 +112,9 @@ VERSIONINFO:
 	@printf "%s" "------------------------------------------------------------"
 	@printf "%s\n" "-------------------"
 
+CLOC:
+	@sh ./Cloc.sh ./Headers/CLOC.hpp ${PROJECT}
+
 TARGETDIR:
 	@mkdir -p $(TARGETDIR)
 
@@ -122,7 +125,7 @@ CPPFILES	:= $(foreach dir,$(SOURCEDIR),$(notdir $(wildcard $(dir)/*.cpp)))
 export VPATH	:= $(foreach dir,$(SOURCEDIR),$(CURDIR)/$(dir))
 export OBJS		:= $(CPPFILES:.cpp=.o)
 
-$(TARGET): OBJSDIR TARGETDIR VERSIONINFO
+$(TARGET): OBJSDIR TARGETDIR CLOC VERSIONINFO
 	@/usr/bin/time -f "%E" -o $(OBJSDIR)/compiletime $(MAKE) \
 	--no-print-directory -C $(OBJSDIR) -f $(TOPSRC)/$(PLATFORM)/Makefile \
 	$(BUILD_TYPE)

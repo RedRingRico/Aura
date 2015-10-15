@@ -38,12 +38,15 @@ namespace Aura
 		AUR_UINT32 RenderString( const Camera &p_Camera, AUR_FLOAT32 p_X,
 			AUR_FLOAT32 p_Y, const char *p_pFormat, ... );
 
+		AUR_FLOAT32 GetLineHeight( ) const;
+
 	private:
 		std::map< char, GLYPH >	m_CharGlyphMap;
 		Texture					m_Texture;
 		AUR_UINT32				m_Hash;
 		AUR_UINT32				m_MaterialHash;
 		MaterialManager			*m_pMaterialManager;
+		AUR_FLOAT32				m_LineHeight;
 		AUR_FLOAT32				m_Colour[ 4 ];
 	};
 }

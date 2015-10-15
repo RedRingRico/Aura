@@ -27,6 +27,11 @@ namespace Aura
 		void SetPosition( const Vector3 &p_Position );
 		void GetPosition( Vector3 &p_Position ) const;
 
+		void SetDimensions( const AUR_FLOAT32 p_Width,
+			const AUR_FLOAT32 p_Height );
+		void GetDimensions( AUR_FLOAT32 &p_Width,
+			AUR_FLOAT32 &p_Height ) const;
+
 		void SetLookPoint( const AUR_FLOAT32 p_X, const AUR_FLOAT32 p_Y,
 			const AUR_FLOAT32 p_Z );
 		void SetLookPoint( const Vector3 &p_LookPoint );
@@ -68,6 +73,8 @@ namespace Aura
 		AUR_FLOAT32		m_Far;
 		AUR_FLOAT32		m_AspectRatio;
 		AUR_FLOAT32		m_FieldOfView;
+		AUR_FLOAT32		m_Width;
+		AUR_FLOAT32		m_Height;
 
 		PROJECTIONMODE	m_ProjectionMode;
 	};

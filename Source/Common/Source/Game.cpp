@@ -10,6 +10,7 @@
 #include <Model.hpp>
 #include <Arithmetic.hpp>
 #include <Font.hpp>
+#include <CLOC.hpp>
 #include <cstring>
 
 namespace Aura
@@ -111,6 +112,14 @@ namespace Aura
 			return AUR_FAIL;
 		}
 
+		Camera ScreenCamera;
+
+		ScreenCamera.SetAspectRatio( 800.0f / 480.0f );
+		ScreenCamera.SetDimensions( 800.0f, 480.0f );
+		ScreenCamera.SetProjectionMode( PROJECTIONMODE_ORTHOGRAPHIC );
+		ScreenCamera.SetClippingPlanes( 1.0f, 1000.0f );
+		ScreenCamera.SetPosition( Vector3( 0.0f, 0.0f, 0.0f ) );
+		ScreenCamera.SetLookPoint( Vector3( 0.0f, 0.0f, -1.0f ) );
 		Camera TestCamera;
 
 		TestCamera.SetAspectRatio( 800.0f / 480.0f );
@@ -230,8 +239,13 @@ namespace Aura
 			Rotate.SetY( Y );
 			TheModel.SetOrientation( Rotate );
 			TheModel.Render( TestCamera );
-			m_pTestFont->RenderString( TestCamera, 0.0f, -100.0f, "TESTING: %u",
-				Counter );
+			ScreenCamera.CalculateViewMatrix( );
+			ScreenCamera.CalculateProjectionMatrix( );
+			m_pTestFont->RenderString( ScreenCamera, 0.0f,
+				m_pTestFont->GetLineHeight( ), "TESTING: %u", Counter );
+			m_pTestFont->RenderString( ScreenCamera, 0.0f,
+				480.0f - m_pTestFont->GetLineHeight( ), "%d lines of code",
+				CLOC_LINECOUNT );
 			m_Renderer.SwapBuffers( );
 
 			memcpy( &OldGamepadState, &GamepadState, sizeof( GamepadState ) );

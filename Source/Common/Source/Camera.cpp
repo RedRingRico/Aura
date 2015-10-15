@@ -10,6 +10,8 @@ namespace Aura
 		m_Far( 100.0f ),
 		m_AspectRatio( 1.0f ),
 		m_FieldOfView( 45.0f ),
+		m_Width( 0.0f ),
+		m_Height( 0.0f ),
 		m_ProjectionMode( PROJECTIONMODE_SCREEN )
 	{
 		m_LookPoint.Set( 0.0f, 0.0f, -1.0f );
@@ -64,6 +66,20 @@ namespace Aura
 	void Camera::GetPosition( Vector3 &p_Position ) const
 	{
 		p_Position = m_Position;
+	}
+
+	void Camera::SetDimensions( const AUR_FLOAT32 p_Width,
+		const AUR_FLOAT32 p_Height )
+	{
+		m_Width = p_Width;
+		m_Height = p_Height;
+	}
+
+	void Camera::GetDimensions( AUR_FLOAT32 &p_Width,
+		AUR_FLOAT32 &p_Height ) const
+	{
+		p_Width = m_Width;
+		p_Height = m_Height;
 	}
 
 	void Camera::SetLookPoint( const AUR_FLOAT32 p_X, const AUR_FLOAT32 p_Y,
@@ -162,6 +178,22 @@ namespace Aura
 			}
 			case PROJECTIONMODE_ORTHOGRAPHIC:
 			{
+				if( Aura::IsZero( m_Far - m_Near ) )
+				{
+					std::cout << "[Aura::Camera::CalculateProjectionMatrix] "
+						"<ERROR> Far - Near is zero" << std::endl;
+
+					return AUR_FAIL;
+				}
+
+				m_Projection.Identity( );
+
+				m_Projection( 0, 0 ) = 1.0f / ( m_Width / 2.0f );
+				m_Projection( 1, 1 ) = 1.0f / ( m_Height / 2.0f );
+				m_Projection( 2, 2 ) = ( -2.0f ) / ( m_Far - m_Near );
+				m_Projection( 2, 3 ) = -( m_Far + m_Near ) /
+					( m_Far - m_Near );
+
 				break;
 			}
 			case PROJECTIONMODE_PERSPECTIVE:

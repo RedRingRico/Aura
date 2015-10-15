@@ -4,6 +4,7 @@
 #include <Camera.hpp>
 #include <MaterialManager.hpp>
 #include <Matrix4x4.hpp>
+#include <FNV.hpp>
 #include <iostream>
 #include <cstdarg>
 #include <cstdio>
@@ -14,7 +15,10 @@
 namespace Aura
 {
 	Font::Font( MaterialManager *p_pMaterialManager ) :
-		m_pMaterialManager( p_pMaterialManager )
+		m_Hash( FNV32_OFFSET ),
+		m_MaterialHash( FNV32_OFFSET ),
+		m_pMaterialManager( p_pMaterialManager ),
+		m_LineHeight( 0.0f )
 	{
 		// BAD!
 		m_pMaterialManager->GetMaterialHash( "Sprite", m_MaterialHash );
@@ -92,6 +96,13 @@ namespace Aura
 				TextureWidth =
 					atof( pNode->first_attribute( "width" )->value( ) );
 				TextureHeight =
+					atof( pNode->first_attribute( "height" )->value( ) );
+			}
+
+			// Get the metrics
+			if( strcmp( pNode->name( ), "metrics" ) == 0 )
+			{
+				m_LineHeight =
 					atof( pNode->first_attribute( "height" )->value( ) );
 			}
 
@@ -201,6 +212,15 @@ namespace Aura
 			ArgPtr );
 		va_end( ArgPtr );
 
+		if( Return < 0 )
+		{
+			std::cout << "[Aura::Font::RenderString] <ERROR> "
+				"Something went wrong creating the formatted string" <<
+				std::endl;
+
+			return AUR_FAIL;
+		}
+
 		CompleteString[ StringLength - 1 ] = '\0';
 
 		RendererPrimitive StringPrimitives;
@@ -261,10 +281,12 @@ namespace Aura
 			PRIMITIVE_TYPE_TRIANGLE_LIST );
 
 		AUR_FLOAT32 ProjectionViewWorldRaw[ 16 ];
-
+		
+		AUR_FLOAT32 ScreenWidth, ScreenHeight;
+		p_Camera.GetDimensions( ScreenWidth, ScreenHeight );
 		Matrix4x4 Projection, View, World;
-		World( 0, 3 ) = -50.0f;
-		World( 1, 3 ) = -100.0f;
+		World( 0, 3 ) = -( ScreenWidth/ 2.0f ) + p_X;
+		World( 1, 3 ) = ( ScreenHeight / 2.0f ) - p_Y;
 		World( 2, 3 ) = 0.0f;
 		p_Camera.GetProjectionMatrix( Projection );
 		p_Camera.GetViewMatrix( View );
@@ -280,9 +302,21 @@ namespace Aura
 		m_pMaterialManager->SetConstantData( m_MaterialHash, "Colour",
 			m_Colour );
 		m_Texture.Activate( );
+		// There needs to be some kind of transparency stage for the renderer
+		// to perform
+		glEnable( GL_BLEND );
+		glBlendEquationSeparate( GL_FUNC_ADD, GL_FUNC_ADD );
+		glBlendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE,
+			GL_ZERO );
 		StringPrimitive.Render( );
+		glDisable( GL_BLEND );
 
 		return AUR_OK;
+	}
+
+	AUR_FLOAT32 Font::GetLineHeight( ) const
+	{
+		return m_LineHeight;
 	}
 }
 
