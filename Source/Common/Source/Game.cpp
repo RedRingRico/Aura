@@ -17,6 +17,7 @@
 #include <cstring>
 #include <inttypes.h>
 #include <sstream>
+#include <NetworkSocket.hpp>
 
 namespace Aura
 {
@@ -72,6 +73,28 @@ namespace Aura
 
 		m_Renderer.SetClearFlags( AUR_TRUE, AUR_TRUE, AUR_TRUE );
 		m_Renderer.SetClearColour( 0.0f, 17.0f / 255.0f, 43.0f / 255.0f );
+
+		NetworkSocket TestSocket;
+
+		if( TestSocket.Open( AUR_NULL, SOCKET_TYPE_DGRAM,
+			SOCKET_PROTOCOL_UDP ) != AUR_OK )
+		{
+			std::cout << "Failed to open a socket" << std::endl;
+		}
+		else
+		{
+			if( TestSocket.Connect( "128.199.103.82",
+				"32500" ) != AUR_OK )
+			{
+				std::cout << "Failed to connect" << std::endl;
+			}
+			else
+			{
+				TestSocket.Send(
+					reinterpret_cast< const AUR_BYTE * >( "TEST DATA" ),
+					strlen( "TEST DATA" ) );
+			}
+		}
 
 		return AUR_OK;
 	}
@@ -187,6 +210,7 @@ namespace Aura
 		std::stringstream InfoString2;
 		InfoString2 << GIT_BUILD_VERSION;
 
+		AUR_UINT32 DotCounter = 0;
 
 		while( Run )
 		{
@@ -290,6 +314,18 @@ namespace Aura
 				400.0f - ( InfoLength / 2.0f ), 
 				480.0f,
 				InfoString2.str( ).c_str( ) );
+
+			m_pTestFont->MeasureString( InfoLength,
+				"Connecting..." );
+
+			m_pTestFont->RenderString( ScreenCamera,
+				800.0f - InfoLength, 
+				480.0f - m_pTestFont->GetLineHeight( ),
+				"Connecting..." );
+
+			for( AUR_UINT32 DotDraw = 0; DotDraw < DotCounter; ++DotDraw )
+			{
+			}
 
 			m_Renderer.SwapBuffers( );
 			
