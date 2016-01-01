@@ -18,6 +18,7 @@
 #include <inttypes.h>
 #include <sstream>
 #include <NetworkSocket.hpp>
+#include <ChatNetworkMessage.hpp>
 
 namespace Aura
 {
@@ -74,7 +75,7 @@ namespace Aura
 		m_Renderer.SetClearFlags( AUR_TRUE, AUR_TRUE, AUR_TRUE );
 		m_Renderer.SetClearColour( 0.0f, 17.0f / 255.0f, 43.0f / 255.0f );
 
-		NetworkSocket TestSocket;
+		NetworkSocket TestSocket( 1, 1 );
 
 		if( TestSocket.Open( AUR_NULL, SOCKET_TYPE_DGRAM,
 			SOCKET_PROTOCOL_UDP ) != AUR_OK )
@@ -90,9 +91,10 @@ namespace Aura
 			}
 			else
 			{
-				TestSocket.Send(
-					reinterpret_cast< const AUR_BYTE * >( "TEST DATA" ),
-					strlen( "TEST DATA" ) );
+				ChatNetworkMessage ChatMessage;
+				ChatMessage.SetChatMessage( 10, 100, "Hello, there!" );
+
+				TestSocket.Send( &ChatMessage );
 			}
 		}
 
@@ -118,7 +120,8 @@ namespace Aura
 
 		m_pTestFont = new Font( &MatMan );
 		m_pTestFont->LoadGlyphsFromFile( "Test/Fonts/Orbitron_Bold_14.xml" );
-		m_pTestFont->LoadTextureFromFile( "Test/Textures/Orbitron_Bold_14.tga" );
+		m_pTestFont->LoadTextureFromFile(
+			"Test/Textures/Orbitron_Bold_14.tga" );
 
 		if( MatMan.CreateFromFile( "Test/Materials/Test.material",
 			TestMaterial ) != AUR_OK )

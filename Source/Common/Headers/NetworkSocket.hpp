@@ -2,6 +2,7 @@
 #define __AURA_NETWORKSOCKET_HPP__
 
 #include <DataTypes.hpp>
+#include <NetworkMessageQueue.hpp>
 #include <netdb.h>
 #include <string>
 
@@ -27,7 +28,8 @@ namespace Aura
 	class NetworkSocket
 	{
 	public:
-		NetworkSocket( );
+		explicit NetworkSocket( const AUR_MEMSIZE p_InboundCapacity,
+			const AUR_MEMSIZE p_OutboundCapacity );
 		~NetworkSocket( );
 
 		AUR_UINT32 Open( const NetworkDevice *p_pNetworkDevice,
@@ -38,13 +40,18 @@ namespace Aura
 			const std::string &p_Port );
 
 		// This will need to be converted to send the queue instead of bytes
-		void Send( const AUR_BYTE *p_pData, const AUR_UINT32 p_Size );
+		void Send( NetworkMessage *p_pMessage );
+
+		// This must be called to send and receive messages
+		void ProcessMessages( );
 
 	private:
-		int				m_Socket;
-		int				m_SocketType;
-		int				m_SocketProtocol;
-		struct addrinfo	m_Server;
+		int					m_Socket;
+		int					m_SocketType;
+		int					m_SocketProtocol;
+		struct addrinfo		m_Server;
+		NetworkMessageQueue	*m_pInboundQueue;
+		NetworkMessageQueue	*m_pOutboundQueue;
 	};
 }
 

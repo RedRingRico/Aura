@@ -11,14 +11,27 @@
 
 namespace Aura
 {
-	NetworkSocket::NetworkSocket( ) :
-		m_Socket( -1 )
+	NetworkSocket::NetworkSocket( const AUR_MEMSIZE p_InboundCapacity,
+		const AUR_MEMSIZE p_OutboundCapacity ) :
+		m_Socket( -1 ),
+		m_pInboundQueue( new NetworkMessageQueue( p_InboundCapacity ) ),
+		m_pOutboundQueue( new NetworkMessageQueue( p_OutboundCapacity ) )
 	{
 	}
 
 	NetworkSocket::~NetworkSocket( )
 	{
 		this->Close( );
+
+		if( m_pInboundQueue )
+		{
+			delete m_pInboundQueue;
+		}
+
+		if( m_pOutboundQueue )
+		{
+			delete m_pOutboundQueue;
+		}
 	}
 
 	AUR_UINT32 NetworkSocket::Open( const NetworkDevice *p_pNetworkDevice,
@@ -117,17 +130,27 @@ namespace Aura
 		return AUR_OK;
 	}
 
-	void NetworkSocket::Send( const AUR_BYTE *p_pData,
-		const AUR_UINT32 p_Size )
+	void NetworkSocket::Send( NetworkMessage *p_pMessage )
 	{
 		if( m_SocketType == SOCK_DGRAM )
 		{
-			if( sendto( m_Socket, p_pData, p_Size, 0, m_Server.ai_addr,
+			if( sendto( m_Socket, p_pMessage->GetData( ),
+				p_pMessage->GetLength( ), 0, m_Server.ai_addr,
 				m_Server.ai_addrlen ) == -1 )
 			{
 				std::cout << "[Aura::NetworkSocket::Send] <ERROR> "
 					"Failed to send data" << std::endl;
 			}
+		}
+	}
+
+	void NetworkSocket::ProcessMessages( )
+	{
+		NETWORK_MESSAGE_QUEUE_ELEMENT Message;
+
+		while( m_pOutboundQueue->GetFront( Message, AUR_TRUE ) != AUR_FAIL )
+		{
+			this->Send( &Message.Message );
 		}
 	}
 }

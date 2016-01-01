@@ -3,7 +3,7 @@
 CLOCHEADER=$1
 PROJECT=`echo $2 | awk '{print toupper( $0 )}'`
 
-cloc --exclude-dir=Libs --exclude-lang="Bourne Shell","make","XSD" --csv --out=cloc.txt ../
+cloc --exclude-dir=Libs --exclude-lang="Bourne Shell","make","XSD","vim script" --csv --out=cloc.txt ../
 grep 1 cloc.txt | cut -d, -f5 > cloc_lines.txt
 CLOC_CXX=`head -2 cloc_lines.txt | tail -1 | cut -d, -f5`
 CLOC_HXX=`head -3 cloc_lines.txt | tail -1 | cut -d, -f5`

@@ -78,7 +78,7 @@ debug:		BUILD		= Debug
 debug:		BUILD_TYPE	= debug
 debug:		BUILD_DEF	= DEBUG
 debug:		TARGET := $(TARGET)D
-debug:		CPPFLAGS += -O0 -ggdb -g3 -Wall -D_DEBUG $(CPPFLAGS_EXT)
+debug:		CPPFLAGS += -O0 -ggdb -g3 -Wall -D_DEBUG -fno-stack-protector $(CPPFLAGS_EXT) 
 debug:		LIBS =
 debug:		$(TARGET)
 
